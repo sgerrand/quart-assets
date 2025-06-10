@@ -1,0 +1,89 @@
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "quart-assets"
+version = "0.1.0"
+description = "Asset management for Quart apps"
+authors = [
+    {name = "Sasha Gerrand",email = "quart-assets@sgerrand.dev"}
+]
+license = {text = "BSD-2-Clause"}
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "quart (>=0.20.0,<0.21.0)",
+    "pyscss",
+    "pyyaml",
+    "webassets (>=2.0)"
+]
+dynamic = ["classifiers"]
+
+[project.entry-points."quart.commands"]
+assets = "quart_assets:assets"
+
+[project.urls]
+Homepage = "https://github.com/sgerrand/quart-assets"
+Repository = "https://github.com/sgerrand/quart-assets"
+Documentation = "https://quart-assets.readthedocs.io"
+"Bug Tracker" = "https://github.com/sgerrand/quart-assets/issues"
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.isort]
+combine_as_imports = true
+force_grid_wrap = 0
+include_trailing_comma = true
+known_first_party = "quart_assets, tests"
+line_length = 100
+multi_line_output = 3
+no_lines_before = "LOCALFOLDER"
+order_by_type = false
+reverse_relative = true
+
+[tool.mypy]
+allow_redefinition = true
+disallow_any_generics = false
+disallow_subclassing_any = true
+disallow_untyped_calls = false
+disallow_untyped_defs = true
+implicit_reexport = true
+no_implicit_optional = true
+show_error_codes = true
+strict = true
+strict_equality = true
+strict_optional = false
+warn_redundant_casts = true
+warn_return_any = false
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[tool.pip-tools]
+strip-extras = true
+
+[tool.pytest.ini_options]
+addopts = "--no-cov-on-fail --showlocals --strict-markers"
+asyncio_default_fixture_loop_scope = "function"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.poetry]
+classifiers = [
+	"Environment :: Web Environment",
+	"Intended Audience :: Developers",
+	"Operating System :: OS Independent",
+	"Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+	"Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+tox = "*"
+
+[tool.poetry.group.test.dependencies]
+pytest = "*"
+PyYAML = "*"
+tox = "*"

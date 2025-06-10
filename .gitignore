@@ -1,19 +1,11 @@
-*.pyc
-*.swp
-*.un~
+# Ignore Python compiled output
+/*.pyc
+/**/__pycache__
 
+# Ignore Python packaging output
+/dist
+
+# Ignore test output
+/.coverage
 /.tox
-/LOCAL_TODO*
-
-# IDEs
-/flask-assets.wpr
-/.idea/*
-
-# distutils stuff
-/build/
-/dist/
-/src/Flask_Assets.egg-info/
-venv
-tests/static
-.eggs/
-
+/tests/static

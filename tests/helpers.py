@@ -1,11 +1,12 @@
 import os
+from typing import Any, List, Optional
 
-from flask import Blueprint
+from quart import Blueprint
 
 __all__ = ("create_files", "new_blueprint")
 
 
-def create_files(parent, *files):
+def create_files(parent: str, *files: str) -> List[str]:
     result = []
     for file in files:
         path = os.path.join(parent, file)
@@ -19,9 +20,10 @@ def create_files(parent, *files):
     return result
 
 
-def new_blueprint(name, import_name=None, **kwargs):
+def new_blueprint(name: str, import_name: Optional[str] = None, **kwargs: Any) -> Blueprint:
     if import_name is None:
         from tests import bp_for_test
+
         import_name = bp_for_test.__name__
     bp = Blueprint(name, import_name, **kwargs)
     return bp

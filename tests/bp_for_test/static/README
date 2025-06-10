@@ -1,1 +1,1 @@
-static folder needs to exist for Flask to pick it up.
+static folder needs to exist for Quart to pick it up.
