@@ -4,21 +4,97 @@ on:
   release:
     types: [ published ]
 
+env:
+  PACKAGE_DIRECTORY: ./src/quart_assets/
+  POETRY_VERSION: "2.1.3"
+  POETRY_CORE_VERSION: "2.1.3"
+  PUBLISH_REGISTRY: https://test.pypi.org/legacy/
+  PYTHON_VERSION: "3.13"
+
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
-    environment: testpypi
+
+    environment:
+      name: testpypi
+
     permissions:
+      # IMPORTANT: this permission is mandatory for committing updated version
       contents: write
+
     steps:
-      - name: Publish PyPI package
-        uses: code-specialist/pypi-poetry-publish@v1
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: main
-          PACKAGE_DIRECTORY: ./src/quart_assets/
-          POETRY_VERSION: "2.1.3"
-          POETRY_CORE_VERSION: "2.1.3"
-          PUBLISH_REGISTRY: https://test.pypi.org/legacy/
-          PUBLISH_REGISTRY_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-          PYTHON_VERSION: "3.13"
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: poetry
+          check-latest: true
+
+      - name: Install poetry
+        run: pip install poetry==${{ env.POETRY_VERSION }} poetry-core==${{ env.POETRY_CORE_VERSION }}
+
+      - name: Set GitHub tag as package version
+        run: |
+          sed -i -r 's/__version__ *= *".*"/__version__ = "${{ github.event.release.tag_name }}"/g' ${{ env.PACKAGE_DIRECTORY }}__init__.py
+          sed -i '0,/version =.*/s//version = "'"${{ github.event.release.tag_name }}"'"/' ./pyproject.toml
+
+      - name: Add and commit version
+        run: |
+          git add ${{ env.PACKAGE_DIRECTORY }}__init__.py ./pyproject.toml
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "admin@code-specialist.com"
+          git commit -m "Change version to ${{ github.event.release.tag_name }}" --allow-empty
+
+      - name: Install dependencies
+        run: poetry install --no-root
+
+      - name: Install dependencies
+        run: poetry install --no-root
+
+      - name: Build PyPI package
+        run: poetry build
+
+      - name: Upload artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: quart-assets-artefact
+          path: dist/quart_assets-${{ github.event.release.tag_name }}.*
+
+      - name: Push updated version commit
+        run: git push origin HEAD:main
+
+  publish:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/quart-assets
+
+    env:
+      PACKAGE_DIRECTORY: ./src/quart_assets/
+      POETRY_VERSION: "2.1.3"
+      POETRY_CORE_VERSION: "2.1.3"
+      PUBLISH_REGISTRY: https://test.pypi.org/legacy/
+      PYTHON_VERSION: "3.13"
+
+    permissions:
+      # IMPORTANT: this permission is mandatory for Trusted Publishing
+      id-token: write
+
+    steps:
+      - name: Download artefacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: quart-assets-artefact
+          path: dist/
+
+      - name: Publish PyPI package
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: ${{ env.PUBLISH_REGISTRY }}
