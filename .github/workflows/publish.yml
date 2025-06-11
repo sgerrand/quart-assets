@@ -16,6 +16,7 @@ jobs:
         with:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: main
+          PACKAGE_DIRECTORY: ./src/quart_assets/
           POETRY_VERSION: "2.1.3"
           POETRY_CORE_VERSION: "2.1.3"
           PUBLISH_REGISTRY: https://test.pypi.org/legacy/
