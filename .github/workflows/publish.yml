@@ -9,6 +9,10 @@ env:
   POETRY_VERSION: "2.1.3"
   POETRY_CORE_VERSION: "2.1.3"
   PYTHON_VERSION: "3.13"
+  TAG_NAME: ${{ format('{0}', github.event.release.tag_name) }}
+
+permissions:
+  contents: read
 
 jobs:
   bump-version:
@@ -21,19 +25,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set GitHub tag as package version
         run: |
-          sed -i -r 's/__version__ *= *".*"/__version__ = "${{ github.event.release.tag_name }}"/g' ${{ env.PACKAGE_DIRECTORY }}__init__.py
-          sed -i '0,/version =.*/s//version = "'"${{ github.event.release.tag_name }}"'"/' ./pyproject.toml
+          sed -i -r 's/__version__ *= *".*"/__version__ = "${TAG_NAME}"/g' ${{ env.PACKAGE_DIRECTORY }}__init__.py
+          sed -i '0,/version =.*/s//version = "'"${TAG_NAME}"'"/' ./pyproject.toml
+        shell: bash
 
       - name: Add and commit version
         run: |
           git add ${{ env.PACKAGE_DIRECTORY }}__init__.py ./pyproject.toml
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions@github.com"
-          git commit -m "Change version to ${{ github.event.release.tag_name }}" --allow-empty
+          git commit -m "Change version to ${TAG_NAME}" --allow-empty
           git push origin HEAD:main
+        shell: bash
 
   build-sdist:
     name: Build sdist
@@ -45,6 +53,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Install poetry
         run: pip install poetry==${{ env.POETRY_VERSION }} poetry-core==${{ env.POETRY_CORE_VERSION }}
@@ -83,6 +93,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Install poetry
         run: pip install poetry==${{ env.POETRY_VERSION }} poetry-core==${{ env.POETRY_CORE_VERSION }}
@@ -135,6 +147,6 @@ jobs:
           merge-multiple: true
 
       - name: Publish PyPI package
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
         with:
           repository-url: ${{ env.PUBLISH_REGISTRY }}
