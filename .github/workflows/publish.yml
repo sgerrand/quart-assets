@@ -5,6 +5,7 @@ on:
     types: [ published ]
 
 env:
+  PACKAGE_DIRECTORY: ./src/quart_assets/
   POETRY_VERSION: "2.1.3"
   POETRY_CORE_VERSION: "2.1.3"
   PYTHON_VERSION: "3.13"
@@ -17,9 +18,6 @@ jobs:
       # IMPORTANT: this permission is mandatory for committing updated version
       contents: write
 
-    env:
-      PACKAGE_DIRECTORY: ./src/quart_assets/
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,7 +29,7 @@ jobs:
 
       - name: Add and commit version
         run: |
-          git add ${{ env.package_directory }}__init__.py ./pyproject.toml
+          git add ${{ env.PACKAGE_DIRECTORY }}__init__.py ./pyproject.toml
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions@github.com"
           git commit -m "Change version to ${{ github.event.release.tag_name }}" --allow-empty
