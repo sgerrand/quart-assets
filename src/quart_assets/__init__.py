@@ -19,7 +19,7 @@ from .extension import (
     QuartResolver,
 )
 
-__version__ = "0.1.0.dev.5"
+__version__ = "0.1.0.dev6"
 
 __all__ = (
     "assets",
