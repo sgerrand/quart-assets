@@ -20,5 +20,5 @@ jobs:
           POETRY_VERSION: "2.1.3"
           POETRY_CORE_VERSION: "2.1.3"
           PUBLISH_REGISTRY: https://test.pypi.org/legacy/
-          PUBLISH_REGISTRY_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
+          PUBLISH_REGISTRY_PASSWORD: ${{ secrets.PYPI_TOKEN }}
           PYTHON_VERSION: "3.13"
