@@ -1,6 +1,6 @@
 # Quart-Assets
 
-[![Build Status](https://github.com/sgerrand/quart-assets/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/sgerrand/quart-assets/actions/workflows/build.yml)
+[![Build Status](https://github.com/sgerrand/quart-assets/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/sgerrand/quart-assets/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
 
 Quart-Assets is an extension for [Quart][quart] that supports merging,
