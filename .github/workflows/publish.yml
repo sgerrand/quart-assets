@@ -11,9 +11,6 @@ env:
   PYTHON_VERSION: "3.13"
   TAG_NAME: ${{ format('{0}', github.event.release.tag_name) }}
 
-permissions:
-  contents: read
-
 jobs:
   bump-version:
     runs-on: ubuntu-latest
