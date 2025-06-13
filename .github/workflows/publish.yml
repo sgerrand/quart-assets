@@ -27,7 +27,7 @@ jobs:
 
       - name: Set GitHub tag as package version
         run: |
-          sed -i -r 's/__version__ *= *".*"/__version__ = "${TAG_NAME}"/g' ${{ env.PACKAGE_DIRECTORY }}__init__.py
+          sed -i -r 's/__version__ *= *".*"/__version__ = "'${TAG_NAME}'"/g' ${{ env.PACKAGE_DIRECTORY }}__init__.py
           sed -i '0,/version =.*/s//version = "'"${TAG_NAME}"'"/' ./pyproject.toml
         shell: bash
 
