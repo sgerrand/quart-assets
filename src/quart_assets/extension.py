@@ -6,7 +6,7 @@ import logging
 from os import path
 from typing import Any, Dict, Optional, Tuple, Union
 
-from quart import current_app, has_app_context, has_request_context
+from quart import has_app_context, has_request_context
 from quart.app import Quart
 from quart.cli import pass_script_info, ScriptInfo
 from quart.globals import app_ctx, request_ctx
@@ -462,37 +462,49 @@ except ImportError:
     pass
 else:
 
-    def _webassets_cmd(cmd: str) -> None:
+    def _webassets_cmd(cmd: str, info: ScriptInfo) -> None:
         """Helper to run a webassets command."""
+        app = info.load_app()
+
+        if not hasattr(app.jinja_env, "assets_environment"):
+            raise RuntimeError(
+                "No assets environment found. Make sure you've "
+                + "initialized QuartAssets with your app."
+            )
 
         logger = logging.getLogger("webassets")
         logger.addHandler(logging.StreamHandler())
         logger.setLevel(logging.DEBUG)
-        cmdenv = CommandLineEnvironment(
-            current_app.jinja_env.assets_environment, logger  # type: ignore[attr-defined]
-        )
-        getattr(cmdenv, cmd)()
+
+        async def _run_with_app_context() -> None:
+            async with app.app_context():
+                cmdenv = CommandLineEnvironment(
+                    app.jinja_env.assets_environment, logger  # type: ignore[attr-defined]
+                )
+                getattr(cmdenv, cmd)()
+
+        asyncio.run(_run_with_app_context())
 
     @click.group()
-    def assets(info: ScriptInfo) -> None:
+    def assets() -> None:
         """Quart Assets commands."""
 
     @assets.command()
     @pass_script_info
     def build(info: ScriptInfo) -> None:
         """Build bundles."""
-        _webassets_cmd("build")
+        _webassets_cmd("build", info)
 
     @assets.command()
     @pass_script_info
     def clean(info: ScriptInfo) -> None:
         """Clean bundles."""
-        _webassets_cmd("clean")
+        _webassets_cmd("clean", info)
 
     @assets.command()
     @pass_script_info
     def watch(info: ScriptInfo) -> None:
         """Watch bundles for file changes."""
-        _webassets_cmd("watch")
+        _webassets_cmd("watch", info)
 
     __all__.extend(["assets", "build", "clean", "watch"])
