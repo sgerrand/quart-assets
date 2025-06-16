@@ -48,6 +48,10 @@ markdown_extensions:
 
 plugins:
   - search
+  - macros:
+      module_name: docs/main
+      include_dir: docs
+      render_by_default: false
   - mkdocstrings:
       handlers:
         python:
