@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "quart-assets"
-version = "0.1.0"
+version = "0.1.1"
 description = "Asset management for Quart apps"
 authors = [
     {name = "Sasha Gerrand",email = "quart-assets@sgerrand.dev"}
