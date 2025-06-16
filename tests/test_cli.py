@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Generator
 
@@ -95,12 +96,17 @@ if __name__ == '__main__':
     # Set environment variables
     env = os.environ.copy()
     env["QUART_APP"] = app_file
-    env["PYTHONPATH"] = str(Path(__file__).parent.parent / "src")
+
+    src_path = str(Path(__file__).parent.parent / "src")
+    if "PYTHONPATH" in env:
+        env["PYTHONPATH"] = src_path + os.pathsep + env["PYTHONPATH"]
+    else:
+        env["PYTHONPATH"] = src_path
 
     try:
         # Test the help command first
         result = subprocess.run(
-            ["python", "-m", "quart", "assets", "--help"],
+            [sys.executable, "-m", "quart", "assets", "--help"],
             cwd=temp_dir,
             env=env,
             capture_output=True,
@@ -115,7 +121,7 @@ if __name__ == '__main__':
 
         # Test the build command
         result = subprocess.run(
-            ["python", "-m", "quart", "assets", "build"],
+            [sys.executable, "-m", "quart", "assets", "build"],
             cwd=temp_dir,
             env=env,
             capture_output=True,
@@ -129,7 +135,7 @@ if __name__ == '__main__':
 
         # Test clean command
         result = subprocess.run(
-            ["python", "-m", "quart", "assets", "clean"],
+            [sys.executable, "-m", "quart", "assets", "clean"],
             cwd=temp_dir,
             env=env,
             capture_output=True,
@@ -183,12 +189,17 @@ assets.register('js_bundle', js_bundle)
     # Set up environment
     env = os.environ.copy()
     env["QUART_APP"] = app_file
-    env["PYTHONPATH"] = str(Path(__file__).parent.parent / "src")
+
+    src_path = str(Path(__file__).parent.parent / "src")
+    if "PYTHONPATH" in env:
+        env["PYTHONPATH"] = src_path + os.pathsep + env["PYTHONPATH"]
+    else:
+        env["PYTHONPATH"] = src_path
 
     try:
         # Run build command
         result = subprocess.run(
-            ["python", "-m", "quart", "assets", "build"],
+            [sys.executable, "-m", "quart", "assets", "build"],
             cwd=temp_dir,
             env=env,
             capture_output=True,
@@ -262,12 +273,17 @@ assets.register('bp_bundle', bundle)
 
     env = os.environ.copy()
     env["QUART_APP"] = app_file
-    env["PYTHONPATH"] = str(Path(__file__).parent.parent / "src")
+
+    src_path = str(Path(__file__).parent.parent / "src")
+    if "PYTHONPATH" in env:
+        env["PYTHONPATH"] = src_path + os.pathsep + env["PYTHONPATH"]
+    else:
+        env["PYTHONPATH"] = src_path
 
     try:
         # Test build with blueprint assets
         result = subprocess.run(
-            ["python", "-m", "quart", "assets", "build"],
+            [sys.executable, "-m", "quart", "assets", "build"],
             cwd=temp_dir,
             env=env,
             capture_output=True,
