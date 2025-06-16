@@ -1,0 +1,57 @@
+site_name: Quart-Assets
+site_description: Asset management for Quart apps
+site_url: https://quart-assets.readthedocs.io
+repo_url: https://github.com/sgerrand/quart-assets
+repo_name: sgerrand/quart-assets
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.tabs
+    - search.highlight
+  palette:
+    - scheme: default
+      primary: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - User Guide:
+    - Installation: installation.md
+    - Quick Start: quickstart.md
+    - Configuration: configuration.md
+    - CLI Commands: cli.md
+  - API Reference:
+    - Environment: api/environment.md
+    - Bundle Management: api/bundles.md
+    - CLI: api/cli.md
+  - Examples: examples.md
+  - Changelog: changelog.md
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.details
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
