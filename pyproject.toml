@@ -65,9 +65,7 @@ warn_unused_ignores = true
 strip-extras = true
 
 [tool.pytest.ini_options]
-addopts = "--no-cov-on-fail --showlocals --strict-markers"
-asyncio_default_fixture_loop_scope = "function"
-asyncio_mode = "auto"
+addopts = "--showlocals --strict-markers"
 testpaths = ["tests"]
 
 [tool.poetry]
