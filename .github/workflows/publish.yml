@@ -117,6 +117,39 @@ jobs:
           name: artefacts-wheel-${{ matrix.os }}
           path: ./dist/quart_assets-*.whl
 
+  publish-test-pypi:
+    name: Publish TestPyPI package
+
+    needs:
+      - build-sdist
+      - build-wheels
+
+    runs-on: ubuntu-latest
+
+    env:
+      PUBLISH_REGISTRY: https://test.pypi.org/legacy/
+
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/quart-assets
+
+    permissions:
+      # IMPORTANT: this permission is mandatory for Trusted Publishing
+      id-token: write
+
+    steps:
+      - name: Download artefacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: artefacts-*
+          path: dist
+          merge-multiple: true
+
+      - name: Publish PyPI package
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
+        with:
+          repository-url: ${{ env.PUBLISH_REGISTRY }}
+
   publish-pypi:
     name: Publish PyPI package
 
