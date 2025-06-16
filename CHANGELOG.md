@@ -6,6 +6,13 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- %% CHANGELOG_ENTRIES %% -->
 
-## 0.1 (2025-06-04)
+## Unreleased
+
+### Fixed
+
+- Resolved type errors with CLI commands.
+- Updated CLI commands to handle Quart's asynchronous app contexts.
+
+## 0.1.0 (2025-06-04)
 
 Initial release, forked from Flask-Assets v2.1.1.
