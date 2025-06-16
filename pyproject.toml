@@ -85,3 +85,10 @@ tox = "*"
 pytest = "*"
 PyYAML = "*"
 tox = "*"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = ">=1.5.0"
+mkdocs-material = ">=9.0.0"
+mkdocstrings-python = ">=0.24.0"
+mkdocs-gen-files = ">=0.5.0"
+mkdocs-literate-nav = ">=0.6.0"
