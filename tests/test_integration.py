@@ -134,6 +134,43 @@ def test_custom_load_path_build(app: Quart, env: QuartAssets, temp_dir: str) -> 
     assert result_js == ["/static/built.js"]
 
 
+def test_custom_load_path_multiple_directories(app: Quart, env: QuartAssets, temp_dir: str) -> None:
+    """Test custom load_path with multiple source directories and build verification."""
+
+    src1_dir = os.path.join(temp_dir, "src1")
+    src2_dir = os.path.join(temp_dir, "src2")
+    os.makedirs(src1_dir, exist_ok=True)
+    os.makedirs(src2_dir, exist_ok=True)
+
+    env.append_path(src1_dir, "/assets1/")
+    env.append_path(src2_dir, "/assets2/")
+
+    with open(os.path.join(src1_dir, "base.css"), "w", encoding="utf-8") as f:
+        f.write("body { background: white; }")
+    with open(os.path.join(src2_dir, "theme.css"), "w", encoding="utf-8") as f:
+        f.write("h1 { color: blue; }")
+
+    app.static_folder = temp_dir
+    env.directory = temp_dir
+    env.url = "/static"
+    env.debug = False
+
+    combined_bundle = Bundle("base.css", "theme.css", output="combined.css", env=env)
+
+    files = get_all_bundle_files(combined_bundle, env)
+    assert os.path.join(src1_dir, "base.css") in files
+    assert os.path.join(src2_dir, "theme.css") in files
+
+    combined_bundle.build()
+    output_path = os.path.join(temp_dir, "combined.css")
+    assert os.path.exists(output_path)
+
+    with open(output_path, "r", encoding="utf-8") as f:
+        content = f.read()
+        assert "background" in content
+        assert "color" in content
+
+
 def test_custom_directory_and_url(app: Quart, env: QuartAssets, temp_dir: str) -> None:
     """Custom directory/url are configured - this will affect how
     we deal with output files."""
