@@ -81,14 +81,66 @@ def test_custom_load_path(app: Quart, env: QuartAssets, temp_dir: str) -> None:
     assert result3 == ["/app_static/out"]
 
 
+def test_custom_load_path_build(app: Quart, env: QuartAssets, temp_dir: str) -> None:
+    """Test that build functionality works correctly with custom load_path."""
+
+    source_dir = os.path.join(temp_dir, "src")
+    os.makedirs(source_dir, exist_ok=True)
+
+    env.append_path(source_dir, "/assets/")
+
+    css_content = "body { margin: 0;   padding: 10px; /* comment */ }"
+    js_content = "function test() { /* comment */ var x = 1;    return x; }"
+
+    css_file = os.path.join(source_dir, "style.css")
+    js_file = os.path.join(source_dir, "script.js")
+
+    with open(css_file, "w", encoding="utf-8") as f:
+        f.write(css_content)
+    with open(js_file, "w", encoding="utf-8") as f:
+        f.write(js_content)
+
+    app.static_folder = temp_dir
+    env.directory = temp_dir
+    env.url = "/static"
+    env.debug = False
+    env.auto_build = True
+    env.url_expire = False
+
+    css_bundle = Bundle("style.css", output="built.css", env=env)
+    css_bundle.build()
+
+    css_output_path = os.path.join(temp_dir, "built.css")
+    assert os.path.exists(css_output_path)
+    with open(css_output_path, "r", encoding="utf-8") as f:
+        built_css = f.read()
+        assert "margin: 0" in built_css
+        assert "padding: 10px" in built_css
+
+    js_bundle = Bundle("script.js", output="built.js", env=env)
+    js_bundle.build()
+
+    js_output_path = os.path.join(temp_dir, "built.js")
+    assert os.path.exists(js_output_path)
+    with open(js_output_path, "r", encoding="utf-8") as f:
+        built_js = f.read()
+        assert "function test()" in built_js
+        assert "var x = 1" in built_js
+
+    result_css = run_with_context(app, lambda: css_bundle.urls())
+    assert result_css == ["/static/built.css"]
+
+    result_js = run_with_context(app, lambda: js_bundle.urls())
+    assert result_js == ["/static/built.js"]
+
+
 def test_custom_directory_and_url(app: Quart, env: QuartAssets, temp_dir: str) -> None:
     """Custom directory/url are configured - this will affect how
     we deal with output files."""
-    # Create source source file, make it findable (by default,
-    # static_folder) is set to a fixed sub-folder of the test dir (why?)
+
     create_files(temp_dir, "a")
     app.static_folder = temp_dir
-    # Setup custom directory/url pair for output
+
     env.directory = temp_dir
     env.url = "/custom"
     env.debug = False  # Return build urls
