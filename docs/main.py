@@ -1,7 +1,8 @@
 from pathlib import Path
+from typing import Any, Callable, Optional
 
 
-def define_env(env):
+def define_env(env: Any) -> None:
     """
     This is the hook for defining variables, macros and filters
 
@@ -11,8 +12,8 @@ def define_env(env):
       transformation
     """
 
-    @env.macro
-    def read_file(file_path, start=None, end=None):
+    @env.macro  # type: ignore[misc]
+    def read_file(file_path: str, start: Optional[str] = None, end: Optional[str] = None) -> str:
         """
         Read content from a file, optionally between start and end tokens.
 
@@ -67,8 +68,8 @@ def define_env(env):
         extracted_lines = lines[start_idx:end_idx]
         return '\n'.join(extracted_lines)
 
-    @env.macro
-    def include(file_path, start=None, end=None, skip_lines=0):
+    @env.macro  # type: ignore[misc]
+    def include(file_path: str, start: Optional[str] = None, end: Optional[str] = None, skip_lines: int = 0) -> str:
         """
         Include content from a file with additional options.
 
