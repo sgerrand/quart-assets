@@ -46,13 +46,22 @@ def test_url_auto(app: Quart, env: QuartAssets) -> None:
     """
     assert "url" not in env.config
 
-    result1 = run_with_context(app, lambda: Bundle("foo", env=env).urls())
+    def get_foo_urls() -> List[str]:
+        return Bundle("foo", env=env).urls()
+
+    def get_bp_bar_urls() -> List[str]:
+        return Bundle("bp/bar", env=env).urls()
+
+    def get_non_bp_bar_urls() -> List[str]:
+        return Bundle("non-bp/bar", env=env).urls()
+
+    result1 = run_with_context(app, get_foo_urls)
     assert result1 == ["/app_static/foo"]
     # Urls for files that point to a blueprint use that blueprint"s url prefix.
-    result2 = run_with_context(app, lambda: Bundle("bp/bar", env=env).urls())
+    result2 = run_with_context(app, get_bp_bar_urls)
     assert result2 == ["/bp_static/bar"]
     # Try with a prefix which is not a blueprint.
-    result3 = run_with_context(app, lambda: Bundle("non-bp/bar", env=env).urls())
+    result3 = run_with_context(app, get_non_bp_bar_urls)
     assert result3 == ["/app_static/non-bp/bar"]
 
 
@@ -68,16 +77,25 @@ def test_custom_load_path(app: Quart, env: QuartAssets, temp_dir: str) -> None:
         os.path.join(temp_dir, os.path.normpath("module/bar"))
     ]
 
-    result1 = run_with_context(app, lambda: Bundle("foo", env=env).urls())
+    def get_foo_urls() -> List[str]:
+        return Bundle("foo", env=env).urls()
+
+    def get_module_bar_urls() -> List[str]:
+        return Bundle("module/bar", env=env).urls()
+
+    def get_foo_output_urls() -> List[str]:
+        return Bundle("foo", output="out", env=env).urls()
+
+    result1 = run_with_context(app, get_foo_urls)
     assert result1 == ["/custom/foo"]
-    result2 = run_with_context(app, lambda: Bundle("module/bar", env=env).urls())
+    result2 = run_with_context(app, get_module_bar_urls)
     assert result2 == ["/custom/module/bar"]
 
     # [Regression] With a load path configured, generating output
     # urls still works, and it still uses the Quart system.
     env.debug = False
     env.url_expire = False
-    result3 = run_with_context(app, lambda: Bundle("foo", output="out", env=env).urls())
+    result3 = run_with_context(app, get_foo_output_urls)
     assert result3 == ["/app_static/out"]
 
 
@@ -127,10 +145,16 @@ def test_custom_load_path_build(app: Quart, env: QuartAssets, temp_dir: str) -> 
         assert "function test()" in built_js
         assert "var x = 1" in built_js
 
-    result_css = run_with_context(app, lambda: css_bundle.urls())
+    def get_css_urls() -> List[str]:
+        return css_bundle.urls()
+
+    def get_js_urls() -> List[str]:
+        return js_bundle.urls()
+
+    result_css = run_with_context(app, get_css_urls)
     assert result_css == ["/static/built.css"]
 
-    result_js = run_with_context(app, lambda: js_bundle.urls())
+    result_js = run_with_context(app, get_js_urls)
     assert result_js == ["/static/built.js"]
 
 
@@ -183,10 +207,16 @@ def test_custom_directory_and_url(app: Quart, env: QuartAssets, temp_dir: str) -
     env.debug = False  # Return build urls
     env.url_expire = False  # No query strings
 
-    result1 = run_with_context(app, lambda: Bundle("a", output="foo", env=env).urls())
+    def get_foo_output_urls() -> List[str]:
+        return Bundle("a", output="foo", env=env).urls()
+
+    def get_module_bar_output_urls() -> List[str]:
+        return Bundle("a", output="module/bar", env=env).urls()
+
+    result1 = run_with_context(app, get_foo_output_urls)
     assert result1 == ["/custom/foo"]
-    # We do not recognize references to modules.
-    result2 = run_with_context(app, lambda: Bundle("a", output="module/bar", env=env).urls())
+
+    result2 = run_with_context(app, get_module_bar_output_urls)
     assert result2 == ["/custom/module/bar"]
 
 
@@ -214,7 +244,11 @@ def test_globals(app: Quart, env: QuartAssets, temp_dir: str) -> None:
     app.static_folder = temp_dir
     create_files(temp_dir, "a.js", "b.js")
     b = Bundle("*.js", env=env)
-    result = run_with_context(app, lambda: b.urls())
+
+    def get_bundle_urls() -> List[str]:
+        return b.urls()
+
+    result = run_with_context(app, get_bundle_urls)
     assert result == ["/app_static/a.js", "/app_static/b.js"]
 
 
@@ -238,14 +272,21 @@ def test_blueprint_output(app: Quart, env: QuartAssets, temp_dir: str) -> None:
 
 def test_blueprint_urls(app: Quart, env: QuartAssets) -> None:
     """Urls to blueprint files are generated correctly."""
+
+    def get_bp_foo_urls() -> List[str]:
+        return Bundle("bp/foo", env=env).urls()
+
+    def get_bp_output_urls() -> List[str]:
+        return Bundle(output="bp/out", debug=False, env=env).urls()
+
     # source urls
-    result1 = run_with_context(app, lambda: Bundle("bp/foo", env=env).urls())
+    result1 = run_with_context(app, get_bp_foo_urls)
     assert result1 == ["/bp_static/foo"]
 
     # output urls - env settings are to not touch filesystem
     env.auto_build = False
     env.url_expire = False
-    result2 = run_with_context(app, lambda: Bundle(output="bp/out", debug=False, env=env).urls())
+    result2 = run_with_context(app, get_bp_output_urls)
     assert result2 == ["/bp_static/out"]
 
 
