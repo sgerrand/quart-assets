@@ -42,7 +42,6 @@ class AsyncAssetsExtension(AssetsExtension):  # type: ignore[misc]
         if env is None:
             raise RuntimeError("No assets environment configured in Jinja2 environment")
 
-        # Construct a bundle with the given options
         bundle_kwargs = {
             "output": output,
             "filters": filter,
@@ -51,12 +50,9 @@ class AsyncAssetsExtension(AssetsExtension):  # type: ignore[misc]
         }
         bundle = self.BundleClass(*self.resolve_contents(files, env), **bundle_kwargs)
 
-        # Retrieve urls (this may or may not cause a build)
         with bundle.bind(env):
             urls = bundle.urls(calculate_sri=True)
 
-        # For each url, execute the content of this template tag (represented
-        # by the macro `caller` given to us by Jinja2).
         result = ""
         for entry in urls:
             if isinstance(entry, dict):
@@ -64,79 +60,57 @@ class AsyncAssetsExtension(AssetsExtension):  # type: ignore[misc]
             else:
                 caller_result = caller(entry, None, bundle.extra)
 
-            # Check if the caller returned a coroutine (async context)
-            if inspect.iscoroutine(caller_result):
-                # The caller returned a coroutine, which means we're in an
-                # async template context
-                # We need to run this coroutine to completion
-                try:
-                    # Use a different approach: run the coroutine in a new
-                    # thread with its own event loop
-                    import queue
-                    import threading
-
-                    result_queue: "queue.Queue[Any]" = queue.Queue()
-                    exception_queue: "queue.Queue[Exception]" = queue.Queue()
-
-                    def run_coroutine() -> None:
-                        """Run the coroutine in a separate thread with a new event loop."""
-                        new_loop = None
-                        try:
-                            # Create a new event loop for this thread
-                            new_loop = asyncio.new_event_loop()
-                            asyncio.set_event_loop(new_loop)
-
-                            # Run the coroutine
-                            result = new_loop.run_until_complete(caller_result)
-                            result_queue.put(result)
-
-                        except Exception as e:
-                            exception_queue.put(e)
-                        finally:
-                            if new_loop is not None:
-                                try:
-                                    new_loop.close()
-                                except Exception:
-                                    pass
-
-                    # Start the thread
-                    thread = threading.Thread(target=run_coroutine, daemon=True)
-                    thread.start()
-
-                    # Wait for the result with a timeout
-                    thread.join(timeout=5.0)
-
-                    if thread.is_alive():
-                        # Thread is still running, this is a timeout
-                        raise RuntimeError("Timeout waiting for async template rendering")
-
-                    # Check for exceptions
-                    if not exception_queue.empty():
-                        raise exception_queue.get()
-
-                    # Get the result
-                    if not result_queue.empty():
-                        caller_result = result_queue.get()
-                    else:
-                        raise RuntimeError("No result received from async template rendering")
-
-                except RuntimeError as e:
-                    if "no running event loop" in str(e):
-                        # No event loop running, close the coroutine
-                        caller_result.close()
-                        raise RuntimeError(
-                            "Cannot handle async template rendering without an event loop"
-                        )
-                    else:
-                        raise
-                except Exception as e:
-                    # Clean up the coroutine
-                    if inspect.iscoroutine(caller_result):
-                        caller_result.close()
-                    raise RuntimeError(f"Error handling async template rendering: {e}")
-
+            caller_result = self._handle_async_caller_result(caller_result)
             result += caller_result
         return result
+
+    def _handle_async_caller_result(self, caller_result: Any) -> str:
+        """Handle potentially async caller results from Jinja2 template rendering.
+
+        Args:
+            caller_result: The result from calling the Jinja2 macro, which may be
+                          a string or a coroutine.
+
+        Returns:
+            The rendered string result.
+
+        Raises:
+            RuntimeError: If async handling fails.
+        """
+        if not inspect.iscoroutine(caller_result):
+            return caller_result
+
+        import concurrent.futures
+
+        def run_coroutine_in_thread() -> str:
+            """Run the coroutine in a separate thread with a new event loop."""
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                return loop.run_until_complete(caller_result)
+            finally:
+                try:
+                    loop.close()
+                except Exception:
+                    pass
+                asyncio.set_event_loop(None)
+
+        try:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(run_coroutine_in_thread)
+                try:
+                    return future.result(timeout=10.0)
+                except concurrent.futures.TimeoutError:
+                    raise RuntimeError("Timeout waiting for async template rendering")
+
+        except Exception as exc:
+            if inspect.iscoroutine(caller_result):
+                try:
+                    caller_result.close()
+                except Exception:
+                    pass
+
+            raise RuntimeError(f"Failed to render async template content: {exc}") from exc
 
 
 __all__ = ["Jinja2Filter"]
