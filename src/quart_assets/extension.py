@@ -41,7 +41,7 @@ class AsyncAssetsExtension(AssetsExtension):  # type: ignore[misc]
     ) -> str:
         env = self.environment.assets_environment  # pyright: ignore[reportAttributeAccessIssue]
         if env is None:
-            raise RuntimeError("No assets environment configured in " + "Jinja2 environment")
+            raise RuntimeError("No assets environment configured in Jinja2 environment")
 
         # Construct a bundle with the given options
         bundle_kwargs = {
