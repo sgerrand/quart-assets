@@ -28,7 +28,6 @@ def get_static_folder(app_or_blueprint: Any) -> str:
     instance, or module/blueprint.
     """
     if not app_or_blueprint.has_static_folder:
-        # Use an exception type here that is not hidden by spit_prefix.
         raise TypeError(f"The referenced blueprint {app_or_blueprint} has no static " "folder.")
     return app_or_blueprint.static_folder
 
