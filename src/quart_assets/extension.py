@@ -57,7 +57,7 @@ class AsyncAssetsExtension(AssetsExtension):  # type: ignore[misc]
             urls = bundle.urls(calculate_sri=True)
 
         # For each url, execute the content of this template tag (represented
-        # by the macro ```caller`` given to use by Jinja2).
+        # by the macro `caller` given to us by Jinja2).
         result = ""
         for entry in urls:
             if isinstance(entry, dict):
