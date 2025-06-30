@@ -70,6 +70,7 @@ testpaths = ["tests"]
 
 [tool.poetry]
 classifiers = [
+	"Development Status :: 3 - Alpha",
 	"Environment :: Web Environment",
 	"Intended Audience :: Developers",
 	"Operating System :: OS Independent",
