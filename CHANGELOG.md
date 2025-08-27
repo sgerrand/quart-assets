@@ -6,7 +6,7 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- %% CHANGELOG_ENTRIES %% -->
 
-## Unreleased
+## 0.1.1 (2025-06-16)
 
 ### Fixed
 
