@@ -6,7 +6,15 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- %% CHANGELOG_ENTRIES %% -->
 
-## Unreleased
+## 0.1.1.post1 (2025-06-16)
+
+### Fixed
+
+- Fixed CLI tests for Windows.
+- Reduced permissions for GitHub Actions workflow jobs.
+- Configured automatic building and publishing of package documentation.
+
+## 0.1.1 (2025-06-16)
 
 ### Fixed
 
