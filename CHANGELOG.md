@@ -6,6 +6,14 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- %% CHANGELOG_ENTRIES %% -->
 
+## [0.1.2](https://github.com/sgerrand/quart-assets/compare/0.1.1...v0.1.2) (2025-08-28)
+
+
+### Documentation
+
+* add entry for v0.1.1.post1 to changelog ([623ccdc](https://github.com/sgerrand/quart-assets/commit/623ccdcf29ec61915759ab2146702107a5f72dd8))
+* update changelog with v0.1.1 ([292ee56](https://github.com/sgerrand/quart-assets/commit/292ee5656a5e7a3c7a1d12707e4e0dfa6c33bf0a))
+
 ## 0.1.1.post1 (2025-06-16)
 
 ### Fixed
