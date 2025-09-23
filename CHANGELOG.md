@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file. See [Keep a
 CHANGELOG](http://keepachangelog.com/) for how to update this file. This project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.3](https://github.com/sgerrand/quart-assets/compare/v0.1.2...v0.1.3) (2025-09-23)
+
+
+### Bug Fixes
+
+* **deps:** bump actions/setup-python from 5.6.0 to 6.0.0 ([264990d](https://github.com/sgerrand/quart-assets/commit/264990df6afc5521d44c50938243c359b178bc78))
+* **deps:** bump actions/setup-python from 5.6.0 to 6.0.0 ([08a164e](https://github.com/sgerrand/quart-assets/commit/08a164ee3cd796931c8e8fb5645dd55eb2117f0e))
+* **deps:** bump pypa/gh-action-pypi-publish from 1.12.4 to 1.13.0 ([77d6c0d](https://github.com/sgerrand/quart-assets/commit/77d6c0d096f6c4cda7441a8f5f62af1be1318425))
+* **deps:** bump pypa/gh-action-pypi-publish from 1.12.4 to 1.13.0 ([526316c](https://github.com/sgerrand/quart-assets/commit/526316c32f3b9fa2058697ddca538deaf60ac793))
+* **deps:** bump zizmorcore/zizmor-action from 0.1.2 to 0.2.0 ([d8eeb8c](https://github.com/sgerrand/quart-assets/commit/d8eeb8cb56757ad50fcb02fd8d1b877d55e22f08))
+* **deps:** bump zizmorcore/zizmor-action from 0.1.2 to 0.2.0 ([3b5be2a](https://github.com/sgerrand/quart-assets/commit/3b5be2a7167ea02260a8c726d206335f7ed606be))
+
 ## [0.1.2](https://github.com/sgerrand/quart-assets/compare/0.1.1...v0.1.2) (2025-08-28)
 
 ### Dependencies
