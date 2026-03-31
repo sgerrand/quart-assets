@@ -1438,15 +1438,28 @@ watchmedo = ["PyYAML (>=3.10)"]
 
 [[package]]
 name = "webassets"
-version = "2.0"
+version = "3.0.0"
 description = "Media asset management for Python, with glue code for various web frameworks"
 optional = false
-python-versions = "*"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "webassets-2.0-py3-none-any.whl", hash = "sha256:a31a55147752ba1b3dc07dee0ad8c8efff274464e08bbdb88c1fd59ffd552724"},
-    {file = "webassets-2.0.tar.gz", hash = "sha256:167132337677c8cedc9705090f6d48da3fb262c8e0b2773b29f3352f050181cd"},
+    {file = "webassets-3.0.0-py3-none-any.whl", hash = "sha256:6d9249f8ce0b2f81b4dac7a8d2084c486579f846b1157b3b66027a4ef5863cf8"},
+    {file = "webassets-3.0.0.tar.gz", hash = "sha256:0520e5fd6fbcc012f486fefc61b966474da8fc1b35b0569a9ec2cb0782f1607a"},
 ]
+
+[package.dependencies]
+pyyaml = ">=6.0.2"
+zope-dottedname = ">=6.0"
+
+[package.extras]
+closure = ["closure (>=20191111)"]
+cssutils = ["cssutils (>=2.11.1)"]
+jinja2 = ["jinja2 (>=3.1.4)"]
+ply = ["ply (>=3.11)"]
+rcssmin = ["rcssmin (>=1.1.2)"]
+sass = ["libsass (>=0.23.0)"]
+slimit = ["slimit (>=0.8.1)"]
 
 [[package]]
 name = "werkzeug"
@@ -1480,6 +1493,21 @@ files = [
 
 [package.dependencies]
 h11 = ">=0.9.0,<1"
+
+[[package]]
+name = "zope-dottedname"
+version = "7.1"
+description = "Resolver for Python dotted names."
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "zope_dottedname-7.1-py3-none-any.whl", hash = "sha256:6d1f5b13634c18c37d8420bc5aac2faaab1b0aca4790bf35cdc456004a100596"},
+    {file = "zope_dottedname-7.1.tar.gz", hash = "sha256:b4f5d69c91c6e61a07e95f65f221d4c66de5b10755b8d50df6fc69584df7f3b8"},
+]
+
+[package.extras]
+docs = ["Sphinx"]
 
 [metadata]
 lock-version = "2.1"
