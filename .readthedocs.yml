@@ -7,8 +7,8 @@ build:
 
   jobs:
     post_install:
-      - pip install poetry
-      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH poetry install --with docs
+      - pip install uv
+      - uv sync --group docs --no-default-groups
 
 mkdocs:
   configuration: mkdocs.yml
