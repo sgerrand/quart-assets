@@ -1,6 +1,6 @@
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.6.6,<0.7"]
+build-backend = "uv_build"
 
 [project]
 name = "quart-assets"
@@ -12,13 +12,21 @@ authors = [
 license = {text = "BSD-2-Clause"}
 readme = "README.md"
 requires-python = ">=3.10"
+keywords = ["quart", "webassets", "assets"]
+classifiers = [
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = [
-    "quart (>=0.20.0,<0.21.0)",
+    "quart>=0.20.0,<0.21.0",
     "pyscss",
     "pyyaml",
-    "webassets (>=2.0)"
+    "webassets>=2.0",
 ]
-dynamic = ["classifiers"]
 
 [project.entry-points."quart.commands"]
 assets = "quart_assets:assets"
@@ -28,6 +36,26 @@ Homepage = "https://github.com/sgerrand/quart-assets"
 Repository = "https://github.com/sgerrand/quart-assets"
 Documentation = "https://quart-assets.readthedocs.io"
 "Bug Tracker" = "https://github.com/sgerrand/quart-assets/issues"
+
+[dependency-groups]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pyyaml",
+]
+dev = [
+    {include-group = "test"},
+    "tox",
+    "tox-uv",
+]
+docs = [
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocstrings-python",
+    "mkdocs-gen-files>=0.5.0",
+    "mkdocs-literate-nav>=0.6.0",
+    "mkdocs-macros-plugin>=1.0.0",
+]
 
 [tool.black]
 line-length = 100
@@ -61,35 +89,6 @@ warn_return_any = false
 warn_unused_configs = true
 warn_unused_ignores = true
 
-[tool.pip-tools]
-strip-extras = true
-
 [tool.pytest.ini_options]
 addopts = "--showlocals --strict-markers"
 testpaths = ["tests"]
-
-[tool.poetry]
-classifiers = [
-	"Environment :: Web Environment",
-	"Intended Audience :: Developers",
-	"Operating System :: OS Independent",
-	"Topic :: Internet :: WWW/HTTP :: Dynamic Content",
-	"Topic :: Software Development :: Libraries :: Python Modules"
-]
-
-[tool.poetry.group.dev.dependencies]
-pytest = "*"
-tox = "*"
-
-[tool.poetry.group.test.dependencies]
-pytest = "*"
-PyYAML = "*"
-tox = "*"
-
-[tool.poetry.group.docs.dependencies]
-mkdocs = ">=1.5.0"
-mkdocs-material = ">=9.0.0"
-mkdocstrings-python = "*"
-mkdocs-gen-files = ">=0.5.0"
-mkdocs-literate-nav = ">=0.6.0"
-mkdocs-macros-plugin = ">=1.0.0"
