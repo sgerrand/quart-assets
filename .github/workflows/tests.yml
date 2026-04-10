@@ -28,15 +28,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Upgrade pip and wheel
-        run: python -m pip install --upgrade pip wheel
-
       - name: Install tox
-        run: pip install tox tox-gh-actions
+        run: uv tool install tox --with tox-uv --with tox-gh-actions
 
       - name: Run tests
-        run: tox
+        run: uv tool run tox
