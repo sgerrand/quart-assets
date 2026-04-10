@@ -9,3 +9,7 @@
 /.coverage
 /.tox
 /tests/static
+
+# Ignore coding agent configuration
+/.claude
+/.codex
