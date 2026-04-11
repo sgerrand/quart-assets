@@ -6,9 +6,9 @@ build:
     python: "3.13"
 
   jobs:
-    post_install:
+    install:
       - pip install uv
       - uv sync --group docs --no-default-groups
-
-mkdocs:
-  configuration: mkdocs.yml
+    build:
+      html:
+        - uv run --group docs --module mkdocs build --clean --site-dir "$READTHEDOCS_OUTPUT/html" --config-file mkdocs.yml
