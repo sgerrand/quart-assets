@@ -66,9 +66,9 @@ quart assets watch
 ## Key Configuration
 
 - **Entry point**: `pyproject.toml` defines `quart.commands` entry point for CLI integration
-- **Version**: Managed via `__version__` tuple in `src/quart_assets/__init__.py` 
-- **Dependencies**: Core deps are Quart>=0.8 and webassets>=2.0
-- **Python support**: 3.10, 3.11, 3.12, 3.13 (defined in tox.ini)
+- **Version**: Managed via `__version__` string in `src/quart_assets/__init__.py`
+- **Dependencies**: Core deps are `quart>=0.20.0,<0.21.0` and `webassets>=2.0`
+- **Python support**: 3.10, 3.11, 3.12, 3.13 (defined in `tox.ini` and `pyproject.toml`)
 
 ## Notable Implementation Details
 
