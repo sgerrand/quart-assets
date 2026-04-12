@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. See [Keep a
 CHANGELOG](http://keepachangelog.com/) for how to update this file. This project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.3](https://github.com/sgerrand/quart-assets/compare/v0.1.2...v0.1.3) (2026-04-12)
+
+
+### Bug Fixes
+
+* **deps:** bump werkzeug from 3.1.3 to 3.1.4 ([9c6cc10](https://github.com/sgerrand/quart-assets/commit/9c6cc1060191eb041f5f8aa9b9f133308f345010))
+* **deps:** bump flask from 3.11 to 3.1.3, werkzeug from 3.1.4 to 3.1.6 ([9c6cc10](https://github.com/sgerrand/quart-assets/commit/d140f924bdcdc2a564432acbac486ca5c8dab885))
+
 ## [0.1.2](https://github.com/sgerrand/quart-assets/compare/0.1.1...v0.1.2) (2025-08-28)
 
 ### Dependencies
