@@ -92,3 +92,68 @@ warn_unused_ignores = true
 [tool.pytest.ini_options]
 addopts = "--showlocals --strict-markers"
 testpaths = ["tests"]
+
+[tool.tox]
+env_list = ["format", "pep8", "py3{10,11,12,13}", "types", "package", "report"]
+skip_missing_interpreters = true
+runner = "uv-venv-lock-runner"
+
+[tool.tox.gh_actions.python]
+"3.10" = "py310"
+"3.11" = "py311"
+"3.12" = "py312"
+"3.13" = "py313"
+
+[tool.tox.env_run_base]
+dependency_groups = ["test"]
+commands = [["pytest", "--cov", "--cov-append", "{posargs}"]]
+
+[tool.tox.env.format]
+base_python = "python3.13"
+deps = ["black", "isort"]
+skip_install = true
+commands = [
+    ["black", "--check", "--diff", "src/quart_assets/", "tests/"],
+    ["isort", "--check", "--diff", "src/quart_assets/", "tests/"],
+]
+
+[tool.tox.env.pep8]
+base_python = "python3.13"
+deps = ["flake8", "pep8-naming", "flake8-print"]
+commands = [["flake8", "src/quart_assets/", "tests/"]]
+
+[tool.tox.env.mypy]
+base_python = "python3.13"
+deps = ["mypy", "types-PyYAML", "pytest"]
+commands = [["mypy", "{toxinidir}"]]
+
+[tool.tox.env.report]
+base_python = "python3.13"
+deps = ["coverage"]
+skip_install = true
+commands = [
+    ["coverage", "report"],
+    ["coverage", "html"],
+]
+
+[tool.tox.env.pyright]
+base_python = "python3.13"
+deps = ["pyright", "pytest", "importlib_metadata", "numpy"]
+commands = [["pyright"]]
+
+[tool.tox.env.types]
+base_python = "python3.13"
+deps = ["mypy", "types-PyYAML", "pytest", "pyright", "importlib_metadata", "numpy"]
+commands = [
+    ["mypy", "{toxinidir}"],
+    ["pyright"],
+]
+
+[tool.tox.env.package]
+base_python = "python3.13"
+allowlist_externals = ["uv"]
+deps = ["twine"]
+commands = [
+    ["uv", "build"],
+    ["twine", "check", "dist/*"],
+]
