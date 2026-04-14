@@ -98,11 +98,13 @@ env_list = ["format", "pep8", "py3{10,11,12,13}", "types", "package", "report"]
 skip_missing_interpreters = true
 runner = "uv-venv-lock-runner"
 
-[tool.tox.gh_actions.python]
-"3.10" = "py310"
-"3.11" = "py311"
-"3.12" = "py312"
-"3.13" = "py313"
+[tool.tox.gh-actions]
+python = """
+    3.10: py310
+    3.11: py311
+    3.12: py312
+    3.13: py313
+    """
 
 [tool.tox.env_run_base]
 dependency_groups = ["test"]
