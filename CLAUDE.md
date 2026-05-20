@@ -13,7 +13,8 @@ framework.
 
 - **Core module**: `src/quart_assets/extension.py` - Single module containing all functionality
 - **Main classes**:
-  - `Environment`: Central class that manages bundles and configuration, integrates with Quart app
+  - `QuartAssets`: Central class that manages bundles and configuration, integrates with Quart app
+  - `AsyncAssetsExtension`: Async-aware webassets Jinja2 extension for Quart's async Jinja env
   - `QuartResolver`: Handles Quart blueprint-aware file resolution and URL generation
   - `QuartConfigStorage`: Uses Quart app config as backend for webassets configuration
   - `Jinja2Filter`: Custom filter that uses Quart's template context for Jinja2 processing
@@ -85,7 +86,7 @@ quart assets watch
 - **Entry point**: `pyproject.toml` defines `quart.commands` entry point for CLI integration
 - **Version**: Managed via `__version__` string in `src/quart_assets/__init__.py`
 - **Dependencies**: Core deps are `quart>=0.20.0,<0.21.0` and `webassets>=2.0`
-- **Python support**: 3.10, 3.11, 3.12, 3.13 (defined in `tox.ini` and `pyproject.toml`)
+- **Python support**: 3.10, 3.11, 3.12, 3.13 (defined in `pyproject.toml` under `[tool.tox]` and `[project]`)
 
 ## Notable Implementation Details
 
