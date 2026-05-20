@@ -4,7 +4,7 @@ import asyncio
 import inspect
 import logging
 from os import path
-from typing import Any, cast, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import click
 from quart import has_app_context, has_request_context
@@ -29,11 +29,18 @@ def get_static_folder(app_or_blueprint: Any) -> str:
 
 
 class AsyncAssetsExtension(AssetsExtension):
-    """An async-aware version of the webassets Jinja2 extension that supports async coroutines."""
+    """Async-aware webassets Jinja2 extension for Quart's async Jinja environment."""
 
     def _render_assets(
         self, filter: Any, output: Any, dbg: Any, depends: Any, files: Any, caller: Any = None
-    ) -> str:
+    ) -> Any:
+        if self.environment.is_async:
+            return self._render_assets_async(filter, output, dbg, depends, files, caller)
+        return self._render_assets_sync(filter, output, dbg, depends, files, caller)
+
+    def _build_bundle(
+        self, filter: Any, output: Any, dbg: Any, depends: Any, files: Any
+    ) -> Tuple[Any, Any]:
         env = self.environment.assets_environment  # ty: ignore[unresolved-attribute]
         if env is None:
             raise RuntimeError("No assets environment configured in Jinja2 environment")
@@ -48,65 +55,34 @@ class AsyncAssetsExtension(AssetsExtension):
 
         with bundle.bind(env):
             urls = bundle.urls(calculate_sri=True)
+        return bundle, urls
 
+    def _render_assets_sync(
+        self, filter: Any, output: Any, dbg: Any, depends: Any, files: Any, caller: Any
+    ) -> str:
+        bundle, urls = self._build_bundle(filter, output, dbg, depends, files)
+        result = ""
+        for entry in urls:
+            if isinstance(entry, dict):
+                result += caller(entry["uri"], entry.get("sri", None), bundle.extra)
+            else:
+                result += caller(entry, None, bundle.extra)
+        return result
+
+    async def _render_assets_async(
+        self, filter: Any, output: Any, dbg: Any, depends: Any, files: Any, caller: Any
+    ) -> str:
+        bundle, urls = self._build_bundle(filter, output, dbg, depends, files)
         result = ""
         for entry in urls:
             if isinstance(entry, dict):
                 caller_result = caller(entry["uri"], entry.get("sri", None), bundle.extra)
             else:
                 caller_result = caller(entry, None, bundle.extra)
-
-            caller_result = self._handle_async_caller_result(caller_result)
+            if inspect.iscoroutine(caller_result):
+                caller_result = await caller_result
             result += caller_result
         return result
-
-    def _handle_async_caller_result(self, caller_result: Any) -> str:
-        """Handle potentially async caller results from Jinja2 template rendering.
-
-        Args:
-            caller_result: The result from calling the Jinja2 macro, which may be
-                          a string or a coroutine.
-
-        Returns:
-            The rendered string result.
-
-        Raises:
-            RuntimeError: If async handling fails.
-        """
-        if not inspect.iscoroutine(caller_result):
-            return caller_result
-
-        import concurrent.futures
-
-        def run_coroutine_in_thread() -> str:
-            """Run the coroutine in a separate thread with a new event loop."""
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            try:
-                return cast(str, loop.run_until_complete(caller_result))
-            finally:
-                try:
-                    loop.close()
-                except Exception:
-                    pass
-                asyncio.set_event_loop(None)
-
-        try:
-            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-                future = executor.submit(run_coroutine_in_thread)
-                try:
-                    return future.result(timeout=10.0)
-                except concurrent.futures.TimeoutError:
-                    raise RuntimeError("Timeout waiting for async template rendering")
-
-        except Exception as exc:
-            if inspect.iscoroutine(caller_result):
-                try:
-                    caller_result.close()
-                except Exception:
-                    pass
-
-            raise RuntimeError(f"Failed to render async template content: {exc}") from exc
 
 
 __all__ = ["Jinja2Filter"]
