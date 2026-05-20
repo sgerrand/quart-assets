@@ -4,7 +4,8 @@ import asyncio
 import inspect
 import logging
 from os import path
-from typing import Any, Dict, Optional, Tuple, Union
+from types import ModuleType
+from typing import Any
 
 import click
 from quart import has_app_context, has_request_context
@@ -40,7 +41,7 @@ class AsyncAssetsExtension(AssetsExtension):
 
     def _build_bundle(
         self, filter: Any, output: Any, dbg: Any, depends: Any, files: Any
-    ) -> Tuple[Any, Any]:
+    ) -> tuple[Any, Any]:
         env = self.environment.assets_environment  # ty: ignore[unresolved-attribute]
         if env is None:
             raise RuntimeError("No assets environment configured in Jinja2 environment")
@@ -88,10 +89,10 @@ class AsyncAssetsExtension(AssetsExtension):
 class Jinja2Filter(Filter):
     """Compiles all source files as Jinja2 templates using Quart contexts."""
 
-    name: Any = "jinja2"
+    name: str = "jinja2"
     max_debug_level = None
 
-    def __init__(self, context: Optional[Dict[str, Any]] = None) -> None:
+    def __init__(self, context: dict[str, Any] | None = None) -> None:
         super().__init__()
         self.context = context or {}
 
@@ -106,7 +107,7 @@ class QuartConfigStorage(ConfigStorage):
     """
 
     def __init__(self, *a: Any, **kw: Any) -> None:
-        self._defaults: Dict[str, Any] = {}
+        self._defaults: dict[str, Any] = {}
         ConfigStorage.__init__(self, *a, **kw)
 
     def _transform_key(self, key: str) -> str:
@@ -173,7 +174,7 @@ class QuartResolver(Resolver):
     are no longer resolved.
     """
 
-    def split_prefix(self, ctx: Any, item: str) -> Tuple[str, str, str]:
+    def split_prefix(self, ctx: Any, item: str) -> tuple[str, str, str]:
         """See if ``item`` has blueprint prefix, return (directory, rel_path, endpoint).
 
         Args:
@@ -306,7 +307,7 @@ class QuartResolver(Resolver):
         # Otherwise, behaves like all other Quart URLs.
         return self.convert_item_to_quart_url(ctx, target)
 
-    def convert_item_to_quart_url(self, ctx: Any, item: str, filepath: Optional[str] = None) -> str:
+    def convert_item_to_quart_url(self, ctx: Any, item: str, filepath: str | None = None) -> str:
         """Given a relative reference like `foo/bar.css`, returns
         the Quart static url. By doing so it takes into account
         blueprints, i.e. in the aformentioned example,
@@ -378,7 +379,7 @@ class QuartAssets(BaseEnvironment):
     config_storage_class: Any = QuartConfigStorage
     resolver_class = QuartResolver
 
-    def __init__(self, app: Optional[Quart] = None) -> None:
+    def __init__(self, app: Quart | None = None) -> None:
         self.app = app
         super().__init__()
         if app:
@@ -421,7 +422,7 @@ class QuartAssets(BaseEnvironment):
     def set_url(self, url: str) -> None:
         self.config["url"] = url
 
-    def get_url(self) -> Optional[str]:
+    def get_url(self) -> str | None:
         if self.config.get("url") is not None:
             return self.config["url"]
         return self._app.static_url_path
@@ -444,7 +445,7 @@ class QuartAssets(BaseEnvironment):
         for name, bundle in bundles.items():
             self.register(name, bundle)
 
-    def from_module(self, path: Union[str, Any]) -> None:
+    def from_module(self, path: str | ModuleType) -> None:
         """Register bundles from a Python module"""
         bundles = PythonLoader(path).load_bundles()
         for name, bundle in bundles.items():

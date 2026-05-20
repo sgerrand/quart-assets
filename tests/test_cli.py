@@ -1,8 +1,8 @@
 import os
 import subprocess
 import sys
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import pytest
 from click.testing import CliRunner

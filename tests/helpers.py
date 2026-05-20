@@ -1,12 +1,12 @@
 import os
-from typing import Any, List, Optional
+from typing import Any
 
 from quart import Blueprint
 
 __all__ = ("create_files", "new_blueprint")
 
 
-def create_files(parent: str, *files: str) -> List[str]:
+def create_files(parent: str, *files: str) -> list[str]:
     result = []
     for file in files:
         path = os.path.join(parent, file)
@@ -20,7 +20,7 @@ def create_files(parent: str, *files: str) -> List[str]:
     return result
 
 
-def new_blueprint(name: str, import_name: Optional[str] = None, **kwargs: Any) -> Blueprint:
+def new_blueprint(name: str, import_name: str | None = None, **kwargs: Any) -> Blueprint:
     if import_name is None:
         from tests import bp_for_test
 

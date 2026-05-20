@@ -1,5 +1,4 @@
 import os
-from typing import List
 
 import pytest
 from quart import Quart
@@ -46,13 +45,13 @@ def test_url_auto(app: Quart, env: QuartAssets) -> None:
     """
     assert "url" not in env.config
 
-    def get_foo_urls() -> List[str]:
+    def get_foo_urls() -> list[str]:
         return Bundle("foo", env=env).urls()
 
-    def get_bp_bar_urls() -> List[str]:
+    def get_bp_bar_urls() -> list[str]:
         return Bundle("bp/bar", env=env).urls()
 
-    def get_non_bp_bar_urls() -> List[str]:
+    def get_non_bp_bar_urls() -> list[str]:
         return Bundle("non-bp/bar", env=env).urls()
 
     result1 = run_with_context(app, get_foo_urls)
@@ -77,13 +76,13 @@ def test_custom_load_path(app: Quart, env: QuartAssets, temp_dir: str) -> None:
         os.path.join(temp_dir, os.path.normpath("module/bar"))
     ]
 
-    def get_foo_urls() -> List[str]:
+    def get_foo_urls() -> list[str]:
         return Bundle("foo", env=env).urls()
 
-    def get_module_bar_urls() -> List[str]:
+    def get_module_bar_urls() -> list[str]:
         return Bundle("module/bar", env=env).urls()
 
-    def get_foo_output_urls() -> List[str]:
+    def get_foo_output_urls() -> list[str]:
         return Bundle("foo", output="out", env=env).urls()
 
     result1 = run_with_context(app, get_foo_urls)
@@ -145,10 +144,10 @@ def test_custom_load_path_build(app: Quart, env: QuartAssets, temp_dir: str) -> 
         assert "function test()" in built_js
         assert "var x = 1" in built_js
 
-    def get_css_urls() -> List[str]:
+    def get_css_urls() -> list[str]:
         return css_bundle.urls()
 
-    def get_js_urls() -> List[str]:
+    def get_js_urls() -> list[str]:
         return js_bundle.urls()
 
     result_css = run_with_context(app, get_css_urls)
@@ -207,10 +206,10 @@ def test_custom_directory_and_url(app: Quart, env: QuartAssets, temp_dir: str) -
     env.debug = False  # Return build urls
     env.url_expire = False  # No query strings
 
-    def get_foo_output_urls() -> List[str]:
+    def get_foo_output_urls() -> list[str]:
         return Bundle("a", output="foo", env=env).urls()
 
-    def get_module_bar_output_urls() -> List[str]:
+    def get_module_bar_output_urls() -> list[str]:
         return Bundle("a", output="module/bar", env=env).urls()
 
     result1 = run_with_context(app, get_foo_output_urls)
@@ -232,7 +231,7 @@ def test_existing_request_object_used(app: Quart, env: QuartAssets) -> None:
 
     # Note: Quart's test_request_context doesn't support environ_overrides
     # This test verifies that existing request context is used when available
-    def _test_func() -> List[str]:
+    def _test_func() -> list[str]:
         return Bundle("foo", env=env).urls()
 
     result = run_with_context(app, _test_func)
@@ -245,7 +244,7 @@ def test_globals(app: Quart, env: QuartAssets, temp_dir: str) -> None:
     create_files(temp_dir, "a.js", "b.js")
     b = Bundle("*.js", env=env)
 
-    def get_bundle_urls() -> List[str]:
+    def get_bundle_urls() -> list[str]:
         return b.urls()
 
     result = run_with_context(app, get_bundle_urls)
@@ -273,10 +272,10 @@ def test_blueprint_output(app: Quart, env: QuartAssets, temp_dir: str) -> None:
 def test_blueprint_urls(app: Quart, env: QuartAssets) -> None:
     """Urls to blueprint files are generated correctly."""
 
-    def get_bp_foo_urls() -> List[str]:
+    def get_bp_foo_urls() -> list[str]:
         return Bundle("bp/foo", env=env).urls()
 
-    def get_bp_output_urls() -> List[str]:
+    def get_bp_output_urls() -> list[str]:
         return Bundle(output="bp/out", debug=False, env=env).urls()
 
     # source urls
