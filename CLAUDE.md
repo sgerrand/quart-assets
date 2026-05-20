@@ -56,8 +56,8 @@ uv run pre-commit autoupdate
 ```
 
 Hook stages:
-- **commit**: trailing-whitespace, end-of-file-fixer, check-yaml/toml, black, isort, flake8
-- **push**: mypy (strict), pyright
+- **commit**: trailing-whitespace, end-of-file-fixer, check-yaml/toml, ruff (lint + format)
+- **push**: ty (type check)
 - **commit-msg**: Conventional Commits enforcement
 
 ### Asset Management Commands

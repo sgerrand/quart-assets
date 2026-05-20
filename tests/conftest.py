@@ -40,7 +40,7 @@ def run_with_context(app: Quart, func: Callable[[], Any]) -> Any:
     """Helper to run a function within an async request context."""
 
     async def _run() -> Any:
-        async with app.test_request_context("/"):
+        async with app.test_request_context("/"):  # ty: ignore[invalid-context-manager]
             result = func()
             # If result is a coroutine, await it
             if hasattr(result, "__await__"):
@@ -54,7 +54,7 @@ def run_with_context_async(app: Quart, func: Callable[[], Any]) -> Any:
     """Helper to run an async function within an async request context."""
 
     async def _run() -> Any:
-        async with app.test_request_context("/"):
+        async with app.test_request_context("/"):  # ty: ignore[invalid-context-manager]
             return await func()
 
     return asyncio.run(_run())

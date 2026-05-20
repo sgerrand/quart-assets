@@ -46,8 +46,10 @@ test = [
 dev = [
     {include-group = "test"},
     "pre-commit",
+    "ruff",
     "tox",
     "tox-uv",
+    "ty",
 ]
 docs = [
     "mkdocs>=1.5.0",
@@ -58,13 +60,9 @@ docs = [
     "mkdocs-macros-plugin>=1.0.0",
 ]
 
-[tool.black]
+[tool.ruff]
 line-length = 100
-target-version = ["py39"]
-
-[tool.flake8]
-max-line-length = 100
-extend-ignore = ["E203"]
+target-version = "py310"
 exclude = [
     ".git",
     ".tox",
@@ -75,40 +73,35 @@ exclude = [
     "example",
 ]
 
-[tool.isort]
-combine_as_imports = true
-force_grid_wrap = 0
-include_trailing_comma = true
-known_first_party = "quart_assets, tests"
-line_length = 100
-multi_line_output = 3
-no_lines_before = "LOCALFOLDER"
-order_by_type = false
-reverse_relative = true
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "N",
+    "T20",
+]
+extend-ignore = ["E203"]
 
-[tool.mypy]
-allow_redefinition = true
-disallow_any_generics = false
-disallow_subclassing_any = true
-disallow_untyped_calls = false
-disallow_untyped_defs = true
-implicit_reexport = true
-no_implicit_optional = true
-show_error_codes = true
-strict = true
-strict_equality = true
-strict_optional = false
-warn_redundant_casts = true
-warn_return_any = false
-warn_unused_configs = true
-warn_unused_ignores = true
+[tool.ruff.lint.isort]
+known-first-party = ["quart_assets", "tests"]
+combine-as-imports = true
+order-by-type = false
+no-lines-before = ["local-folder"]
+
+[tool.ty.src]
+include = ["src", "tests"]
+
+[tool.ty.rules]
+unused-ignore-comment = "warn"
 
 [tool.pytest.ini_options]
 addopts = "--showlocals --strict-markers"
 testpaths = ["tests"]
 
 [tool.tox]
-env_list = ["format", "pep8", "py3{10,11,12,13}", "types", "package", "report"]
+env_list = ["lint", "py3{10,11,12,13}", "types", "package", "report"]
 skip_missing_interpreters = true
 runner = "uv-venv-lock-runner"
 
@@ -124,24 +117,14 @@ python = """
 dependency_groups = ["test"]
 commands = [["pytest", "--cov", "--cov-append", "{posargs}"]]
 
-[tool.tox.env.format]
+[tool.tox.env.lint]
 base_python = "python3.13"
-deps = ["black", "isort"]
+deps = ["ruff"]
 skip_install = true
 commands = [
-    ["black", "--check", "--diff", "src/quart_assets/", "tests/"],
-    ["isort", "--check", "--diff", "src/quart_assets/", "tests/"],
+    ["ruff", "check", "src/quart_assets/", "tests/"],
+    ["ruff", "format", "--check", "--diff", "src/quart_assets/", "tests/"],
 ]
-
-[tool.tox.env.pep8]
-base_python = "python3.13"
-deps = ["flake8", "Flake8-pyproject", "pep8-naming", "flake8-print"]
-commands = [["flake8", "src/quart_assets/", "tests/"]]
-
-[tool.tox.env.mypy]
-base_python = "python3.13"
-deps = ["mypy", "types-PyYAML", "pytest"]
-commands = [["mypy", "{toxinidir}"]]
 
 [tool.tox.env.report]
 base_python = "python3.13"
@@ -152,18 +135,10 @@ commands = [
     ["coverage", "html"],
 ]
 
-[tool.tox.env.pyright]
-base_python = "python3.13"
-deps = ["pyright", "pytest", "importlib_metadata", "numpy"]
-commands = [["pyright"]]
-
 [tool.tox.env.types]
 base_python = "python3.13"
-deps = ["mypy", "types-PyYAML", "pytest", "pyright", "importlib_metadata", "numpy"]
-commands = [
-    ["mypy", "{toxinidir}"],
-    ["pyright"],
-]
+deps = ["ty", "pytest"]
+commands = [["ty", "check"]]
 
 [tool.tox.env.package]
 base_python = "python3.13"

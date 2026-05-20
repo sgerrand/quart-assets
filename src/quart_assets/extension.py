@@ -4,7 +4,7 @@ import asyncio
 import inspect
 import logging
 from os import path
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, cast, Dict, Optional, Tuple, Union
 
 from quart import has_app_context, has_request_context
 from quart.app import Quart
@@ -23,7 +23,7 @@ def get_static_folder(app_or_blueprint: Any) -> str:
     instance, or module/blueprint.
     """
     if not app_or_blueprint.has_static_folder:
-        raise TypeError(f"The referenced blueprint {app_or_blueprint} has no static " "folder.")
+        raise TypeError(f"The referenced blueprint {app_or_blueprint} has no static folder.")
     return app_or_blueprint.static_folder
 
 
@@ -33,7 +33,7 @@ class AsyncAssetsExtension(AssetsExtension):
     def _render_assets(
         self, filter: Any, output: Any, dbg: Any, depends: Any, files: Any, caller: Any = None
     ) -> str:
-        env = self.environment.assets_environment  # type: ignore[attr-defined]
+        env = self.environment.assets_environment  # ty: ignore[unresolved-attribute]
         if env is None:
             raise RuntimeError("No assets environment configured in Jinja2 environment")
 
@@ -82,7 +82,7 @@ class AsyncAssetsExtension(AssetsExtension):
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             try:
-                return loop.run_until_complete(caller_result)
+                return cast(str, loop.run_until_complete(caller_result))
             finally:
                 try:
                     loop.close()
@@ -467,7 +467,7 @@ class QuartAssets(BaseEnvironment):
         # Use our custom async-aware extension instead of the default webassets
         # extension
         app.jinja_env.add_extension(AsyncAssetsExtension)
-        app.jinja_env.assets_environment = self  # type: ignore[attr-defined]
+        app.jinja_env.assets_environment = self  # ty: ignore[unresolved-attribute]
 
     def from_yaml(self, path: str) -> None:
         """Register bundles from a YAML configuration file"""
@@ -509,9 +509,10 @@ else:
         logger.setLevel(logging.DEBUG)
 
         async def _run_with_app_context() -> None:
-            async with app.app_context():
+            async with app.app_context():  # ty: ignore[invalid-context-manager]
                 cmdenv = CommandLineEnvironment(
-                    app.jinja_env.assets_environment, logger  # type: ignore[attr-defined]
+                    app.jinja_env.assets_environment,  # ty: ignore[unresolved-attribute]
+                    logger,
                 )
                 getattr(cmdenv, cmd)()
 

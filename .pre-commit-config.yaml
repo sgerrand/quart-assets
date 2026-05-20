@@ -15,38 +15,24 @@ repos:
       - id: check-merge-conflict
       - id: debug-statements
 
-  - repo: https://github.com/psf/black
-    rev: 25.1.0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.13
     hooks:
-      - id: black
-        args: [--line-length=100]
-
-  - repo: https://github.com/PyCQA/isort
-    rev: 6.0.0
-    hooks:
-      - id: isort
-
-  - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
-    hooks:
-      - id: flake8
-        additional_dependencies: [Flake8-pyproject, pep8-naming, flake8-print]
+      - id: ruff
+        args: [--fix]
+        files: ^(src/|tests/)
+      - id: ruff-format
         files: ^(src/|tests/)
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+  - repo: local
     hooks:
-      - id: mypy
+      - id: ty
+        name: ty
+        entry: uv run --group dev ty check
+        language: system
+        types: [python]
+        pass_filenames: false
         stages: [pre-push]
-        additional_dependencies: [types-PyYAML, pytest, quart, webassets]
-        files: ^(src/|tests/)
-
-  - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.390
-    hooks:
-      - id: pyright
-        stages: [pre-push]
-        additional_dependencies: [pytest, importlib_metadata, numpy, quart, webassets]
 
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v3.6.0
