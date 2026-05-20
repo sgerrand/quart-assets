@@ -14,7 +14,7 @@ framework.
 - **Core module**: `src/quart_assets/extension.py` - Single module containing all functionality
 - **Main classes**:
   - `Environment`: Central class that manages bundles and configuration, integrates with Quart app
-  - `QuartResolver`: Handles Quart blueprint-aware file resolution and URL generation  
+  - `QuartResolver`: Handles Quart blueprint-aware file resolution and URL generation
   - `QuartConfigStorage`: Uses Quart app config as backend for webassets configuration
   - `Jinja2Filter`: Custom filter that uses Quart's template context for Jinja2 processing
 - **CLI commands**: Provides `quart assets build/clean/watch` commands via Quart's CLI system
@@ -42,6 +42,23 @@ uv sync
 # Update dependencies
 uv sync --upgrade
 ```
+
+### Pre-commit Hooks
+```bash
+# One-time install (registers pre-commit, pre-push, commit-msg hooks)
+uv run pre-commit install --install-hooks
+
+# Run all hooks across the repo
+uv run pre-commit run --all-files
+
+# Update hook versions
+uv run pre-commit autoupdate
+```
+
+Hook stages:
+- **commit**: trailing-whitespace, end-of-file-fixer, check-yaml/toml, black, isort, flake8
+- **push**: mypy (strict), pyright
+- **commit-msg**: Conventional Commits enforcement
 
 ### Asset Management Commands
 When working with a Quart app that uses this extension:

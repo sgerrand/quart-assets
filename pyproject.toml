@@ -45,6 +45,7 @@ test = [
 ]
 dev = [
     {include-group = "test"},
+    "pre-commit",
     "tox",
     "tox-uv",
 ]
@@ -60,6 +61,19 @@ docs = [
 [tool.black]
 line-length = 100
 target-version = ["py39"]
+
+[tool.flake8]
+max-line-length = 100
+extend-ignore = ["E203"]
+exclude = [
+    ".git",
+    ".tox",
+    ".venv",
+    "build",
+    "dist",
+    "docs",
+    "example",
+]
 
 [tool.isort]
 combine_as_imports = true
@@ -121,7 +135,7 @@ commands = [
 
 [tool.tox.env.pep8]
 base_python = "python3.13"
-deps = ["flake8", "pep8-naming", "flake8-print"]
+deps = ["flake8", "Flake8-pyproject", "pep8-naming", "flake8-print"]
 commands = [["flake8", "src/quart_assets/", "tests/"]]
 
 [tool.tox.env.mypy]
