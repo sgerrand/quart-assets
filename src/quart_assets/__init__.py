@@ -8,7 +8,7 @@ except ImportError:
     request_ctx = _request_ctx_stack.top
     app_ctx = _app_ctx_stack.top
 
-from webassets import Bundle  # type: ignore[import-untyped]  # noqa F401
+from webassets.bundle import Bundle  # noqa: F401
 
 from .extension import (
     assets,

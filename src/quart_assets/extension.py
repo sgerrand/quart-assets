@@ -11,16 +11,11 @@ from quart.app import Quart
 from quart.cli import pass_script_info, ScriptInfo
 from quart.globals import app_ctx, request_ctx
 from quart.templating import render_template_string
-from webassets.env import (  # type: ignore[import-untyped]
-    BaseEnvironment,
-    ConfigStorage,
-    env_options,
-    Resolver,
-)
-from webassets.ext.jinja2 import AssetsExtension  # type: ignore[import-untyped]
-from webassets.filter import Filter, register_filter  # type: ignore[import-untyped]
-from webassets.loaders import PythonLoader, YAMLLoader  # type: ignore[import-untyped]
-from webassets.script import CommandLineEnvironment  # type: ignore[import-untyped]
+from webassets.env import BaseEnvironment, ConfigStorage, env_options, Resolver
+from webassets.ext.jinja2 import AssetsExtension
+from webassets.filter import Filter, register_filter
+from webassets.loaders import PythonLoader, YAMLLoader
+from webassets.script import CommandLineEnvironment
 
 
 def get_static_folder(app_or_blueprint: Any) -> str:
@@ -32,13 +27,13 @@ def get_static_folder(app_or_blueprint: Any) -> str:
     return app_or_blueprint.static_folder
 
 
-class AsyncAssetsExtension(AssetsExtension):  # type: ignore[misc]
+class AsyncAssetsExtension(AssetsExtension):
     """An async-aware version of the webassets Jinja2 extension that supports async coroutines."""
 
     def _render_assets(
         self, filter: Any, output: Any, dbg: Any, depends: Any, files: Any, caller: Any = None
     ) -> str:
-        env = self.environment.assets_environment  # pyright: ignore[reportAttributeAccessIssue]
+        env = self.environment.assets_environment  # type: ignore[attr-defined]
         if env is None:
             raise RuntimeError("No assets environment configured in Jinja2 environment")
 
@@ -116,10 +111,10 @@ class AsyncAssetsExtension(AssetsExtension):  # type: ignore[misc]
 __all__ = ["Jinja2Filter"]
 
 
-class Jinja2Filter(Filter):  # type: ignore[misc]
+class Jinja2Filter(Filter):
     """Compiles all source files as Jinja2 templates using Quart contexts."""
 
-    name = "jinja2"
+    name: Any = "jinja2"
     max_debug_level = None
 
     def __init__(self, context: Optional[Dict[str, Any]] = None) -> None:
@@ -130,7 +125,7 @@ class Jinja2Filter(Filter):  # type: ignore[misc]
         out.write(render_template_string(_in.read(), **self.context))
 
 
-class QuartConfigStorage(ConfigStorage):  # type: ignore[misc]
+class QuartConfigStorage(ConfigStorage):
     """Uses the config object of a Quart app as the backend: either the app
     instance bound to the extension directly, or the current Quart app on
     the stack. Also provides per-application defaults for some values.
@@ -189,7 +184,7 @@ class QuartConfigStorage(ConfigStorage):  # type: ignore[misc]
         del self.env._app.config[self._transform_key(key)]
 
 
-class QuartResolver(Resolver):  # type: ignore[misc]
+class QuartResolver(Resolver):
     """Adds support for Quart blueprints.
 
     This resolver is designed to use the Quart staticfile system to
@@ -404,14 +399,14 @@ class QuartResolver(Resolver):  # type: ignore[misc]
         return url
 
 
-class QuartAssets(BaseEnvironment):  # type: ignore[misc]
+class QuartAssets(BaseEnvironment):
     """This object is used to hold a collection of bundles and configuration.
 
     If initialized with a Quart app instance then a webassets Jinja2 extension
     is automatically registered.
     """
 
-    config_storage_class = QuartConfigStorage
+    config_storage_class: Any = QuartConfigStorage
     resolver_class = QuartResolver
 
     def __init__(self, app: Optional[Quart] = None) -> None:

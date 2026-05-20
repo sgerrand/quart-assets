@@ -3,7 +3,7 @@ from typing import List
 
 import pytest
 from quart import Quart
-from webassets.bundle import get_all_bundle_files  # type: ignore[import-untyped]
+from webassets.bundle import get_all_bundle_files
 
 from quart_assets import Bundle, QuartAssets
 from tests.conftest import run_with_context

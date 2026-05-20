@@ -12,7 +12,7 @@ def define_env(env: Any) -> None:
       transformation
     """
 
-    @env.macro  # type: ignore[misc]
+    @env.macro  # type: ignore[untyped-decorator]
     def read_file(file_path: str, start: Optional[str] = None, end: Optional[str] = None) -> str:
         """
         Read content from a file, optionally between start and end tokens.
@@ -30,14 +30,14 @@ def define_env(env: Any) -> None:
             {{ read_file('../README.md', start='## Installation') }}
             {{ read_file('../README.md', start='## Features', end='## Usage') }}
         """
-        docs_dir = Path(env.conf['docs_dir'])
+        docs_dir = Path(env.conf["docs_dir"])
         full_path = docs_dir / file_path
 
         if not full_path.exists():
             return f"**Error: File not found: {file_path}**"
 
         try:
-            with open(full_path, 'r', encoding='utf-8') as f:
+            with open(full_path, "r", encoding="utf-8") as f:
                 content = f.read()
         except OSError as e:
             return f"**Error reading file {file_path}: {e}**"
@@ -45,7 +45,7 @@ def define_env(env: Any) -> None:
         if start is None and end is None:
             return content
 
-        lines = content.split('\n')
+        lines = content.split("\n")
         start_idx = 0
         end_idx = len(lines)
 
@@ -58,7 +58,7 @@ def define_env(env: Any) -> None:
                 return f"**Warning: Start token '{start}' not found in {file_path}**"
 
         if end is not None:
-            for i, line in enumerate(lines[start_idx + 1:], start_idx + 1):
+            for i, line in enumerate(lines[start_idx + 1 :], start_idx + 1):
                 if end in line:
                     end_idx = i
                     break
@@ -66,10 +66,12 @@ def define_env(env: Any) -> None:
                 pass
 
         extracted_lines = lines[start_idx:end_idx]
-        return '\n'.join(extracted_lines)
+        return "\n".join(extracted_lines)
 
-    @env.macro  # type: ignore[misc]
-    def include(file_path: str, start: Optional[str] = None, end: Optional[str] = None, skip_lines: int = 0) -> str:
+    @env.macro  # type: ignore[untyped-decorator]
+    def include(
+        file_path: str, start: Optional[str] = None, end: Optional[str] = None, skip_lines: int = 0
+    ) -> str:
         """
         Include content from a file with additional options.
 
@@ -85,7 +87,7 @@ def define_env(env: Any) -> None:
         content = read_file(file_path, start, end)
 
         if skip_lines > 0:
-            lines = content.split('\n')
-            content = '\n'.join(lines[skip_lines:])
+            lines = content.split("\n")
+            content = "\n".join(lines[skip_lines:])
 
         return content
