@@ -19,7 +19,7 @@ assets = QuartAssets(app)
 # CSS Bundle
 css_bundle = Bundle(
     'css/reset.css',
-    'css/base.css', 
+    'css/base.css',
     'css/blog.css',
     filters='cssmin',
     output='dist/blog.min.css'
@@ -66,11 +66,11 @@ if __name__ == '__main__':
             <a href="/about">About</a>
         </nav>
     </header>
-    
+
     <main>
         {% block content %}{% endblock %}
     </main>
-    
+
     <footer>
         <p>&copy; 2024 My Blog</p>
     </footer>
@@ -96,14 +96,14 @@ from quart_assets import QuartAssets, Bundle
 def create_app():
     app = Quart(__name__)
     assets = QuartAssets(app)
-    
+
     # Register blueprints
     from .frontend import frontend_bp
     from .admin import admin_bp
-    
+
     app.register_blueprint(frontend_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
-    
+
     # Frontend assets
     frontend_css = Bundle(
         'frontend/css/bootstrap.css',
@@ -112,7 +112,7 @@ def create_app():
         filters='cssmin',
         output='dist/frontend.min.css'
     )
-    
+
     frontend_js = Bundle(
         'frontend/js/vendor/jquery.js',
         'frontend/js/vendor/bootstrap.js',
@@ -121,7 +121,7 @@ def create_app():
         filters='jsmin',
         output='dist/frontend.min.js'
     )
-    
+
     # Admin assets (blueprint-specific)
     admin_css = Bundle(
         'admin/css/admin.css',
@@ -129,20 +129,20 @@ def create_app():
         filters='cssmin',
         output='admin/admin.min.css'
     )
-    
+
     admin_js = Bundle(
         'admin/js/admin.js',
         'admin/js/charts.js',
         filters='jsmin',
         output='admin/admin.min.js'
     )
-    
+
     # Register bundles
     assets.register('frontend_css', frontend_css)
     assets.register('frontend_js', frontend_js)
     assets.register('admin_css', admin_css)
     assets.register('admin_js', admin_js)
-    
+
     return app
 ```
 
@@ -151,7 +151,7 @@ def create_app():
 from quart import Blueprint
 
 frontend_bp = Blueprint(
-    'frontend', 
+    'frontend',
     __name__,
     template_folder='templates',
     static_folder='static',
@@ -168,7 +168,7 @@ from quart import Blueprint
 admin_bp = Blueprint(
     'admin',
     __name__,
-    template_folder='templates', 
+    template_folder='templates',
     static_folder='static',
     static_url_path='/admin/static'
 )
@@ -248,7 +248,7 @@ assets.register('vendor_js', vendor_js)
 // Modern CSS features
 .app {
   display: grid;
-  grid-template-areas: 
+  grid-template-areas:
     "header"
     "main"
     "footer";
@@ -272,7 +272,7 @@ class App {
         this.cart = new ShoppingCart();
         this.initializeComponents();
     }
-    
+
     async initializeComponents() {
         const productCards = document.querySelectorAll('.product-card');
         productCards.forEach(card => {
@@ -353,7 +353,7 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key'
-    
+
 class DevelopmentConfig(Config):
     DEBUG = True
     ASSETS_DEBUG = True
@@ -390,13 +390,13 @@ from config import config
 def create_app(config_name=None):
     if config_name is None:
         config_name = os.environ.get('QUART_ENV', 'default')
-    
+
     app = Quart(__name__)
     app.config.from_object(config[config_name])
-    
+
     assets = QuartAssets(app)
     assets.from_yaml('assets.yml')
-    
+
     return app
 ```
 
@@ -439,7 +439,7 @@ server {
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
-    
+
     # Serve asset bundles with aggressive caching
     location /static/dist/ {
         alias /app/static/dist/;
@@ -474,10 +474,10 @@ def app():
     app.config['TESTING'] = True
     app.config['ASSETS_DEBUG'] = True
     app.config['ASSETS_AUTO_BUILD'] = False
-    
+
     assets = QuartAssets(app)
     assets.from_yaml('assets.yml')
-    
+
     return app
 
 @pytest.fixture
@@ -494,11 +494,11 @@ from quart_assets import QuartAssets, Bundle
 
 def test_bundle_registration(app):
     assets = app.jinja_env.assets_environment
-    
+
     # Test bundle exists
     assert 'css_main' in assets
     assert 'js_app' in assets
-    
+
     # Test bundle contents
     css_bundle = assets['css_main']
     assert css_bundle.output == 'dist/main.min.css'
@@ -506,7 +506,7 @@ def test_bundle_registration(app):
 @pytest.mark.asyncio
 async def test_asset_urls_in_template(client):
     response = await client.get('/')
-    
+
     # Check that asset URLs are present
     assert b'/static/dist/main.min.css' in response.data
     assert b'/static/dist/app.min.js' in response.data
@@ -532,14 +532,14 @@ if not app.debug:
         filters='pyscss,cssmin',
         output='dist/app.min.css'
     )
-    
+
     # JavaScript with modern optimization
     js_bundle = Bundle(
         'js/src/*.js',
         filters=['babel', 'jsmin'],
         output='dist/app.min.js'
     )
-    
+
     # Set cache-busting
     app.config['ASSETS_URL_EXPIRE'] = True
     app.config['ASSETS_CACHE'] = '/tmp/webassets-cache'

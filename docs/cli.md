@@ -165,17 +165,17 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.11
-    
+
     - name: Install dependencies
       run: |
         pip install -e .
         pip install pytest
-    
+
     - name: Build assets
       run: python -m quart assets build
       env:
         QUART_APP: myapp.py
-    
+
     - name: Run tests
       run: pytest
 ```

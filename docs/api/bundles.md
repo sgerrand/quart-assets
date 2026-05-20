@@ -11,7 +11,7 @@ collection of asset files that should be processed together.
 from quart_assets import Bundle
 
 # Basic bundle
-css_bundle = Bundle('css/main.css', 'css/utils.css', 
+css_bundle = Bundle('css/main.css', 'css/utils.css',
                    output='dist/all.css')
 
 # Bundle with filters
@@ -85,7 +85,7 @@ css_main = Bundle('css/main.css', 'css/layout.css',
 
 # SCSS compilation
 scss_bundle = Bundle('scss/main.scss',
-                    filters='pyscss,cssmin', 
+                    filters='pyscss,cssmin',
                     output='dist/compiled.min.css')
 
 # Vendor CSS
@@ -165,7 +165,7 @@ assets.from_yaml('bundles.yml')
 from quart_assets import Bundle
 
 bundles = {
-    'css_main': Bundle('css/main.css', filters='cssmin', 
+    'css_main': Bundle('css/main.css', filters='cssmin',
                       output='dist/main.min.css'),
     'js_main': Bundle('js/main.js', filters='jsmin',
                      output='dist/main.min.js')

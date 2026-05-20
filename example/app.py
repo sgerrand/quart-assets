@@ -4,6 +4,7 @@ from os import path
 
 from quart import Quart, render_template
 from quart.wrappers import Response
+
 from quart_assets import QuartAssets
 
 sys.path.insert(0, path.join(path.dirname(__file__), "../src"))
@@ -11,9 +12,7 @@ sys.path.insert(0, path.join(path.dirname(__file__), "../src"))
 app = Quart(__name__)
 
 assets = QuartAssets(app)
-assets.register(
-    "main", "style1.css", "style2.css", output="cached.css", filters="cssmin"
-)
+assets.register("main", "style1.css", "style2.css", output="cached.css", filters="cssmin")
 
 
 @app.route("/")

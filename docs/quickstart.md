@@ -105,7 +105,7 @@ css_bundle = Bundle(
 # JavaScript Bundle
 js_bundle = Bundle(
     'js/main.js',
-    filters='jsmin', 
+    filters='jsmin',
     output='dist/all.min.js'
 )
 
@@ -136,7 +136,7 @@ Create a template that uses your bundles:
     <div class="header">
         <h1>Welcome to Quart-Assets!</h1>
     </div>
-    
+
     <div class="content">
         <p>Your assets are bundled and minified automatically.</p>
         <button class="btn" onclick="showMessage('Hello from bundled JS!')">

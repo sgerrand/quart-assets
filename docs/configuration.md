@@ -104,7 +104,7 @@ When using blueprints, assets can reference blueprint-specific directories:
 from quart import Blueprint
 
 # Create blueprint with static folder
-admin_bp = Blueprint('admin', __name__, 
+admin_bp = Blueprint('admin', __name__,
                     static_folder='static',
                     static_url_path='/admin/static')
 
