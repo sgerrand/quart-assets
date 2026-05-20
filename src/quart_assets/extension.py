@@ -175,18 +175,17 @@ class QuartResolver(Resolver):
     """
 
     def split_prefix(self, ctx: Any, item: str) -> tuple[str, str, str]:
-        """See if ``item`` has blueprint prefix, return (directory, rel_path, endpoint).
+        """Split a blueprint-prefixed asset path.
 
-        Args:
-            ctx: The webassets environment context
-            item: Asset path that may contain blueprint prefix (e.g., "blueprint_name/file.css")
-
-        Returns:
-            Tuple of (directory, relative_path, endpoint)
+        Returns ``(directory, relative_path, endpoint)``. If ``item`` has a
+        ``blueprint_name/...`` prefix that matches a registered blueprint with
+        a static folder, the blueprint's static folder and endpoint are used.
+        Otherwise the app's static folder is used and ``item`` is returned
+        unchanged.
 
         Raises:
-            TypeError: If app context is invalid or blueprint lacks static folder
-            ValueError: If item is empty or invalid
+            ValueError: If ``item`` is empty or no app context is available.
+            TypeError: If the matched blueprint, or the app, has no static folder.
         """
         if not item:
             raise ValueError("Asset item cannot be empty")
@@ -195,70 +194,20 @@ class QuartResolver(Resolver):
         if app is None:
             raise ValueError("No app context available")
 
-        directory = ""
-        endpoint = ""
-        original_item = item
+        if hasattr(app, "blueprints") and "/" in item:
+            blueprint_name, name = item.split("/", 1)
+            if blueprint_name and name and blueprint_name in app.blueprints:
+                try:
+                    directory = get_static_folder(app.blueprints[blueprint_name])
+                except TypeError as e:
+                    raise TypeError(f"Blueprint '{blueprint_name}' has no static folder") from e
+                return directory, name, f"{blueprint_name}.static"
 
         try:
-            if hasattr(app, "blueprints") and "/" in item:
-                try:
-                    blueprint_name, name = item.split("/", 1)
-                    if not blueprint_name or not name:
-                        raise ValueError(f"Invalid blueprint prefix format in '{item}'")
-
-                    if blueprint_name in app.blueprints:
-                        blueprint = app.blueprints[blueprint_name]
-                        try:
-                            directory = get_static_folder(blueprint)
-                            endpoint = f"{blueprint_name}.static"
-                            item = name
-                        except TypeError as e:
-                            logging.getLogger(__name__).error(
-                                f"Blueprint '{blueprint_name}' has no static folder "
-                                f"for asset '{original_item}': {e}"
-                            )
-                            raise TypeError(
-                                f"Blueprint '{blueprint_name}' has no static folder"
-                            ) from e
-                    else:
-                        logging.getLogger(__name__).debug(
-                            f"Blueprint '{blueprint_name}' not found, "
-                            f"treating '{original_item}' as app-level path"
-                        )
-                        directory = get_static_folder(app)
-                        endpoint = "static"
-                        item = original_item
-
-                except ValueError as e:
-                    logging.getLogger(__name__).debug(
-                        f"Invalid blueprint prefix format in '{original_item}': {e}, "
-                        "falling back to app static"
-                    )
-                    directory = get_static_folder(app)
-                    endpoint = "static"
-                    item = original_item
-            else:
-                # No blueprints support or no prefix, use app static
-                directory = get_static_folder(app)
-                endpoint = "static"
-
+            directory = get_static_folder(app)
         except TypeError as e:
-            logging.getLogger(__name__).error(
-                f"Failed to get static folder for app when processing '{original_item}': {e}"
-            )
             raise TypeError("App has no static folder configured") from e
-        except Exception as e:
-            logging.getLogger(__name__).error(
-                f"Unexpected error processing '{original_item}': {e}, falling back to app static"
-            )
-            try:
-                directory = get_static_folder(app)
-                endpoint = "static"
-                item = original_item
-            except TypeError as te:
-                raise TypeError("App has no static folder configured") from te
-
-        return directory, item, endpoint
+        return directory, item, "static"
 
     def use_webassets_system_for_output(self, ctx: Any) -> bool:
         return ctx.config.get("directory") is not None or ctx.config.get("url") is not None
