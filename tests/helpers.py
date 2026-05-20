@@ -13,8 +13,8 @@ def create_files(parent: str, *files: str) -> List[str]:
         dir_path = os.path.dirname(path)
         if not os.path.exists(dir_path):
             os.mkdir(dir_path)
-        f = open(path, "w", encoding="utf-8")
-        f.close()
+        with open(path, "w", encoding="utf-8"):
+            pass
         result.append(path)
 
     return result

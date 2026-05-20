@@ -1,5 +1,5 @@
-import os
 import types
+from pathlib import Path
 
 from quart import Quart
 
@@ -23,22 +23,18 @@ def test_from_module(app: Quart, env: QuartAssets) -> None:
     assert result == "/app_static/py_file1;/app_static/py_file2;"
 
 
-def test_from_yaml(app: Quart, env: QuartAssets) -> None:
-    with open("test.yaml", "w", encoding="utf-8") as f:
-        f.write(
-            """
+def test_from_yaml(app: Quart, env: QuartAssets, tmp_path: Path) -> None:
+    yaml_path = tmp_path / "test.yaml"
+    yaml_path.write_text(
+        """
         yaml_test:
             contents:
                 - yaml_file1
                 - yaml_file2
-        """
-        )
-    try:
-        env.from_yaml("test.yaml")
-        template = app.jinja_env.from_string(
-            '{% assets "yaml_test" %}{{ASSET_URL}};{% endassets %}'
-        )
-        result = run_with_context_async(app, lambda: template.render_async())
-        assert result == "/app_static/yaml_file1;/app_static/yaml_file2;"
-    finally:
-        os.remove("test.yaml")
+        """,
+        encoding="utf-8",
+    )
+    env.from_yaml(str(yaml_path))
+    template = app.jinja_env.from_string('{% assets "yaml_test" %}{{ASSET_URL}};{% endassets %}')
+    result = run_with_context_async(app, lambda: template.render_async())
+    assert result == "/app_static/yaml_file1;/app_static/yaml_file2;"
