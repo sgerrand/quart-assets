@@ -6,6 +6,7 @@ import logging
 from os import path
 from typing import Any, cast, Dict, Optional, Tuple, Union
 
+import click
 from quart import has_app_context, has_request_context
 from quart.app import Quart
 from quart.cli import pass_script_info, ScriptInfo
@@ -488,57 +489,56 @@ class QuartAssets(BaseEnvironment):
 register_filter(Jinja2Filter)
 
 
-try:
-    import click
-except ImportError:
-    pass
-else:
+def _webassets_cmd(cmd: str, info: ScriptInfo) -> None:
+    """Helper to run a webassets command."""
+    app = info.load_app()
 
-    def _webassets_cmd(cmd: str, info: ScriptInfo) -> None:
-        """Helper to run a webassets command."""
-        app = info.load_app()
+    if not hasattr(app.jinja_env, "assets_environment"):
+        raise RuntimeError(
+            "No assets environment found. Make sure you've "
+            + "initialized QuartAssets with your app."
+        )
 
-        if not hasattr(app.jinja_env, "assets_environment"):
-            raise RuntimeError(
-                "No assets environment found. Make sure you've "
-                + "initialized QuartAssets with your app."
+    logger = logging.getLogger("webassets")
+    if not logger.handlers:
+        logger.addHandler(logging.StreamHandler())
+    logger.setLevel(logging.DEBUG)
+
+    async def _run_with_app_context() -> None:
+        async with app.app_context():  # ty: ignore[invalid-context-manager]
+            cmdenv = CommandLineEnvironment(
+                app.jinja_env.assets_environment,  # ty: ignore[unresolved-attribute]
+                logger,
             )
+            getattr(cmdenv, cmd)()
 
-        logger = logging.getLogger("webassets")
-        if not logger.handlers:
-            logger.addHandler(logging.StreamHandler())
-        logger.setLevel(logging.DEBUG)
+    asyncio.run(_run_with_app_context())
 
-        async def _run_with_app_context() -> None:
-            async with app.app_context():  # ty: ignore[invalid-context-manager]
-                cmdenv = CommandLineEnvironment(
-                    app.jinja_env.assets_environment,  # ty: ignore[unresolved-attribute]
-                    logger,
-                )
-                getattr(cmdenv, cmd)()
 
-        asyncio.run(_run_with_app_context())
+@click.group()
+def assets() -> None:
+    """Quart Assets commands."""
 
-    @click.group()
-    def assets() -> None:
-        """Quart Assets commands."""
 
-    @assets.command()
-    @pass_script_info
-    def build(info: ScriptInfo) -> None:
-        """Build bundles."""
-        _webassets_cmd("build", info)
+@assets.command()
+@pass_script_info
+def build(info: ScriptInfo) -> None:
+    """Build bundles."""
+    _webassets_cmd("build", info)
 
-    @assets.command()
-    @pass_script_info
-    def clean(info: ScriptInfo) -> None:
-        """Clean bundles."""
-        _webassets_cmd("clean", info)
 
-    @assets.command()
-    @pass_script_info
-    def watch(info: ScriptInfo) -> None:
-        """Watch bundles for file changes."""
-        _webassets_cmd("watch", info)
+@assets.command()
+@pass_script_info
+def clean(info: ScriptInfo) -> None:
+    """Clean bundles."""
+    _webassets_cmd("clean", info)
 
-    __all__.extend(["assets", "build", "clean", "watch"])
+
+@assets.command()
+@pass_script_info
+def watch(info: ScriptInfo) -> None:
+    """Watch bundles for file changes."""
+    _webassets_cmd("watch", info)
+
+
+__all__.extend(["assets", "build", "clean", "watch"])
