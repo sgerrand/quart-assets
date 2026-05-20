@@ -142,11 +142,6 @@ class QuartConfigStorage(ConfigStorage):
         if key in self._defaults:
             return self._defaults.__getitem__(key)
 
-        # Finally try to use a default based on the current app
-        deffunc = getattr(self, f"_app_default_{key}", None)
-        if deffunc and callable(deffunc):
-            return deffunc()
-
         # We've run out of options
         raise KeyError()
 
