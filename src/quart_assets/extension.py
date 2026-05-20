@@ -85,9 +85,6 @@ class AsyncAssetsExtension(AssetsExtension):
         return result
 
 
-__all__ = ["Jinja2Filter"]
-
-
 class Jinja2Filter(Filter):
     """Compiles all source files as Jinja2 templates using Quart contexts."""
 
@@ -517,4 +514,14 @@ def watch(info: ScriptInfo) -> None:
     _webassets_cmd("watch", info)
 
 
-__all__.extend(["assets", "build", "clean", "watch"])
+__all__ = [
+    "AsyncAssetsExtension",
+    "Jinja2Filter",
+    "QuartAssets",
+    "QuartConfigStorage",
+    "QuartResolver",
+    "assets",
+    "build",
+    "clean",
+    "watch",
+]
