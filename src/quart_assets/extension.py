@@ -155,7 +155,7 @@ class QuartConfigStorage(ConfigStorage):
 
     def __getitem__(self, key: str) -> Any:
         value = self._get_deprecated(key)
-        if value:
+        if value is not None:
             return value
 
         # First try the current app's config
@@ -505,7 +505,8 @@ else:
             )
 
         logger = logging.getLogger("webassets")
-        logger.addHandler(logging.StreamHandler())
+        if not logger.handlers:
+            logger.addHandler(logging.StreamHandler())
         logger.setLevel(logging.DEBUG)
 
         async def _run_with_app_context() -> None:
