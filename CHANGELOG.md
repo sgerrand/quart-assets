@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file. See [Keep a
 CHANGELOG](http://keepachangelog.com/) for how to update this file. This project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.5](https://github.com/sgerrand/quart-assets/compare/v0.1.4...v0.1.5) (2026-05-21)
+
+
+### Bug Fixes
+
+* correct falsy config check and prevent CLI logger handler leak ([de5999a](https://github.com/sgerrand/quart-assets/commit/de5999a9a8b89f2220f2f08a16bb6609996db1a3))
+* **types:** resolve mypy strict and pyright errors ([537314f](https://github.com/sgerrand/quart-assets/commit/537314fc2561f90390c727f4e0f5e6b37eab7746))
+
+
+### Documentation
+
+* correct tox config location and class name in CLAUDE.md ([7282b30](https://github.com/sgerrand/quart-assets/commit/7282b304313b8406fa7d097d485263cdb9fc12a2))
+
 ## [0.1.4](https://github.com/sgerrand/quart-assets/compare/v0.1.3...v0.1.4) (2026-05-20)
 
 
