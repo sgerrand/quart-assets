@@ -8,7 +8,7 @@ from types import ModuleType
 from typing import Any
 
 import click
-from quart import has_app_context, has_request_context
+from quart import has_app_context, has_request_context, url_for
 from quart.app import Quart
 from quart.cli import pass_script_info, ScriptInfo
 from quart.globals import app_ctx, request_ctx
@@ -257,17 +257,18 @@ class QuartResolver(Resolver):
         return self.convert_item_to_quart_url(ctx, target)
 
     def convert_item_to_quart_url(self, ctx: Any, item: str, filepath: str | None = None) -> str:
-        """Given a relative reference like `foo/bar.css`, returns
-        the Quart static url. By doing so it takes into account
-        blueprints, i.e. in the aformentioned example,
-        ``foo`` may reference a blueprint.
+        """Build a Quart URL for an asset reference.
 
-        If an absolute path is given via ``filepath``, it will be
-        used instead. This is needed because ``item`` may be a
-        glob instruction that was resolved to multiple files.
+        Resolves blueprint prefixes via :meth:`split_prefix` and asks the
+        app's URL map to construct the URL for the matching static endpoint.
+        Works both inside a request context (via :func:`quart.url_for`) and
+        outside one (e.g. during ``quart assets build``), correctly honouring
+        blueprint ``static_url_path`` values and any custom URL routing.
+
+        If ``filepath`` is provided it overrides the relative path returned by
+        :meth:`split_prefix`; this is needed when ``item`` is a glob that was
+        resolved to multiple files.
         """
-        from quart import has_request_context, url_for
-
         directory, rel_path, endpoint = self.split_prefix(ctx, item)
 
         if filepath is not None:
@@ -279,40 +280,19 @@ class QuartResolver(Resolver):
         filename = filename.replace("\\", "/")
 
         if has_request_context():
-            # We're already in a request context, use it directly
             url = url_for(endpoint, filename=filename)
         else:
-            # Fallback to manual URL construction when no request context
-            # This handles both sync and async contexts
+            # No request context (e.g. `quart assets build`). `url_for` would
+            # need SERVER_NAME, so bind a URL adapter from the app's url_map
+            # directly and let it route blueprint static endpoints normally.
             app = ctx.environment._app
+            server_name = app.config.get("SERVER_NAME") or ""
+            url_adapter = app.url_map.bind(server_name, url_scheme="http")
+            url = url_adapter.build(endpoint, {"filename": filename}, force_external=False)
 
-            # Handle blueprint URLs
-            if endpoint.endswith(".static"):
-                # This is a blueprint static endpoint
-                bp_name = endpoint[:-7]  # Remove '.static' suffix
-                if hasattr(app, "blueprints") and bp_name in app.blueprints:
-                    bp = app.blueprints[bp_name]
-                    static_url_path = getattr(bp, "static_url_path", None)
-                    if static_url_path:
-                        url = f"{static_url_path}/{filename}"
-                    else:
-                        # Use blueprint name as prefix
-                        url = f"/{bp_name}/{filename}"
-                else:
-                    # Fallback to app static path
-                    url = f"{app.static_url_path}/{filename}"
-            else:
-                # Regular app static endpoint
-                url = f"{app.static_url_path}/{filename}"
-
-        # In some cases, url will be an absolute url with a scheme and
-        # hostname. (for example, when using werkzeug's host matching).
-        # In general, url_for() will return a http url. During assets build,
-        # we don't know yet if the assets will be served over http, https
-        # or both. Let's use // instead. url_for takes a _scheme argument,
-        # but only together with external=True, which we do not want to
-        # force every time. Further, # this _scheme argument is not able to
-        # render // - it always forces a colon.
+        # During assets build, scheme is unknown — convert any absolute
+        # `http://host/path` URL to a scheme-relative `//host/path` so the
+        # rendered template works on both http and https.
         if url and url.startswith("http:"):
             url = url[5:]
         return url
