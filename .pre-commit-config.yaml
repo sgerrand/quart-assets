@@ -26,9 +26,17 @@ repos:
 
   - repo: local
     hooks:
+      - id: uv-lock-check
+        name: uv lock --check
+        entry: uv lock --check
+        language: system
+        pass_filenames: false
+        files: ^(pyproject\.toml|uv\.lock)$
+        stages: [pre-commit]
+
       - id: ty
         name: ty
-        entry: uv run --group dev ty check
+        entry: uv run --frozen --group dev ty check
         language: system
         types: [python]
         pass_filenames: false
