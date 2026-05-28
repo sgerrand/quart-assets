@@ -352,16 +352,12 @@ class QuartAssets(BaseEnvironment):
         app.jinja_env.assets_environment = self  # ty: ignore[unresolved-attribute]
 
     def from_yaml(self, path: str) -> None:
-        """Register bundles from a YAML configuration file"""
-        bundles = YAMLLoader(path).load_bundles()
-        for name, bundle in bundles.items():
-            self.register(name, bundle)
+        """Register bundles from a YAML configuration file."""
+        self.register(YAMLLoader(path).load_bundles())
 
     def from_module(self, path: str | ModuleType) -> None:
-        """Register bundles from a Python module"""
-        bundles = PythonLoader(path).load_bundles()
-        for name, bundle in bundles.items():
-            self.register(name, bundle)
+        """Register bundles from a Python module."""
+        self.register(PythonLoader(path).load_bundles())
 
 
 # Override webassets' default jinja2 filter so it renders with Quart's
