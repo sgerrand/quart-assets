@@ -316,34 +316,27 @@ class QuartAssets(BaseEnvironment):
             + "and no application in current context"
         )
 
-    def set_directory(self, directory: str) -> None:
-        self.config["directory"] = directory
-
-    def get_directory(self) -> str:
+    @property
+    def directory(self) -> str:
+        """The base directory to which all paths will be relative."""
         if self.config.get("directory") is not None:
             return self.config["directory"]
         return get_static_folder(self._app)
 
-    directory = property(
-        get_directory,
-        set_directory,
-        doc="""The base directory to which all paths will be relative to.
-    """,
-    )
+    @directory.setter
+    def directory(self, value: str) -> None:
+        self.config["directory"] = value
 
-    def set_url(self, url: str) -> None:
-        self.config["url"] = url
-
-    def get_url(self) -> str | None:
+    @property
+    def url(self) -> str | None:
+        """The base url to which all static urls will be relative."""
         if self.config.get("url") is not None:
             return self.config["url"]
         return self._app.static_url_path
 
-    url = property(
-        get_url,
-        set_url,
-        doc="""The base url to which all static urls will be relative to.""",
-    )
+    @url.setter
+    def url(self, value: str) -> None:
+        self.config["url"] = value
 
     def init_app(self, app: Quart) -> None:
         # Use our custom async-aware extension instead of the default webassets
