@@ -62,19 +62,19 @@ class AsyncAssetsExtension(AssetsExtension):
         self, filter: Any, output: Any, dbg: Any, depends: Any, files: Any, caller: Any
     ) -> str:
         bundle, urls = self._build_bundle(filter, output, dbg, depends, files)
-        result = ""
+        parts: list[str] = []
         for entry in urls:
             if isinstance(entry, dict):
-                result += caller(entry["uri"], entry.get("sri", None), bundle.extra)
+                parts.append(caller(entry["uri"], entry.get("sri", None), bundle.extra))
             else:
-                result += caller(entry, None, bundle.extra)
-        return result
+                parts.append(caller(entry, None, bundle.extra))
+        return "".join(parts)
 
     async def _render_assets_async(
         self, filter: Any, output: Any, dbg: Any, depends: Any, files: Any, caller: Any
     ) -> str:
         bundle, urls = self._build_bundle(filter, output, dbg, depends, files)
-        result = ""
+        parts: list[str] = []
         for entry in urls:
             if isinstance(entry, dict):
                 caller_result = caller(entry["uri"], entry.get("sri", None), bundle.extra)
@@ -82,8 +82,8 @@ class AsyncAssetsExtension(AssetsExtension):
                 caller_result = caller(entry, None, bundle.extra)
             if inspect.iscoroutine(caller_result):
                 caller_result = await caller_result
-            result += caller_result
-        return result
+            parts.append(caller_result)
+        return "".join(parts)
 
 
 class Jinja2Filter(Filter):
@@ -194,7 +194,7 @@ class QuartResolver(Resolver):
         if app is None:
             raise ValueError("No app context available")
 
-        if hasattr(app, "blueprints") and "/" in item:
+        if "/" in item:
             blueprint_name, name = item.split("/", 1)
             if blueprint_name and name and blueprint_name in app.blueprints:
                 try:
@@ -216,44 +216,32 @@ class QuartResolver(Resolver):
         return bool(ctx.load_path)
 
     def search_for_source(self, ctx: Any, item: str) -> Any:
-        # If a load_path is set, use it instead of the Quart static system.
-        #
-        # Note: With only env.directory set, we don't go to default;
-        # Setting env.directory only makes the output directory fixed.
         if self.use_webassets_system_for_sources(ctx):
             return Resolver.search_for_source(self, ctx, item)
 
-        # Look in correct blueprint's directory
-        directory, item, endpoint = self.split_prefix(ctx, item)
+        directory, item, _ = self.split_prefix(ctx, item)
         try:
             return self.consider_single_directory(directory, item)
         except IOError:
-            # XXX: Hack to make the tests pass, which are written to not
-            # expect an IOError upon missing files. They need to be rewritten.
+            # Return the would-be path so webassets can report a useful
+            # "missing source" error later instead of an opaque IOError here.
             return path.normpath(path.join(directory, item))
 
     def resolve_output_to_path(self, ctx: Any, target: str, bundle: Any) -> Any:
-        # If a directory/url pair is set, always use it for output files
         if self.use_webassets_system_for_output(ctx):
             return Resolver.resolve_output_to_path(self, ctx, target, bundle)
 
-        # Allow targeting blueprint static folders
-        directory, rel_path, endpoint = self.split_prefix(ctx, target)
+        directory, rel_path, _ = self.split_prefix(ctx, target)
         return path.normpath(path.join(directory, rel_path))
 
     def resolve_source_to_url(self, ctx: Any, filepath: str, item: str) -> str:
-        # If a load path is set, use it instead of the Quart static system.
         if self.use_webassets_system_for_sources(ctx):
             return super().resolve_source_to_url(ctx, filepath, item)
-
         return self.convert_item_to_quart_url(ctx, item, filepath)
 
     def resolve_output_to_url(self, ctx: Any, target: str) -> str:
-        # With a directory/url pair set, use it for output files.
         if self.use_webassets_system_for_output(ctx):
             return Resolver.resolve_output_to_url(self, ctx, target)
-
-        # Otherwise, behaves like all other Quart URLs.
         return self.convert_item_to_quart_url(ctx, target)
 
     def convert_item_to_quart_url(self, ctx: Any, item: str, filepath: str | None = None) -> str:
@@ -272,29 +260,24 @@ class QuartResolver(Resolver):
         directory, rel_path, endpoint = self.split_prefix(ctx, item)
 
         if filepath is not None:
-            filename = filepath[len(directory) + 1 :]
+            filename = path.relpath(filepath, directory)
         else:
             filename = rel_path
-
-        # Windows compatibility
         filename = filename.replace("\\", "/")
 
         if has_request_context():
             url = url_for(endpoint, filename=filename)
         else:
-            # No request context (e.g. `quart assets build`). `url_for` would
-            # need SERVER_NAME, so bind a URL adapter from the app's url_map
-            # directly and let it route blueprint static endpoints normally.
+            # `url_for` outside a request context needs SERVER_NAME; bind the
+            # adapter directly so the URL map still resolves the static rules.
             app = ctx.environment._app
             server_name = app.config.get("SERVER_NAME") or ""
             url_adapter = app.url_map.bind(server_name, url_scheme="http")
             url = url_adapter.build(endpoint, {"filename": filename}, force_external=False)
 
-        # During assets build, scheme is unknown — convert any absolute
-        # `http://host/path` URL to a scheme-relative `//host/path` so the
-        # rendered template works on both http and https.
-        if url and url.startswith("http:"):
-            url = url[5:]
+        # Scheme is unknown during build; emit scheme-relative URLs.
+        if url:
+            url = url.removeprefix("http:")
         return url
 
 
@@ -381,9 +364,8 @@ class QuartAssets(BaseEnvironment):
             self.register(name, bundle)
 
 
-# Override the built-in ``jinja2`` filter that ships with ``webassets``. This
-# custom filter uses Quart's ``render_template_string`` function to provide all
-# the standard Quart template context variables.
+# Override webassets' default jinja2 filter so it renders with Quart's
+# template context.
 register_filter(Jinja2Filter)
 
 
@@ -437,16 +419,3 @@ def clean(info: ScriptInfo) -> None:
 def watch(info: ScriptInfo) -> None:
     """Watch bundles for file changes."""
     _webassets_cmd("watch", info)
-
-
-__all__ = [
-    "AsyncAssetsExtension",
-    "Jinja2Filter",
-    "QuartAssets",
-    "QuartConfigStorage",
-    "QuartResolver",
-    "assets",
-    "build",
-    "clean",
-    "watch",
-]
