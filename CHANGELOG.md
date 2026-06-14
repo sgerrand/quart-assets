@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. See [Keep a
 CHANGELOG](http://keepachangelog.com/) for how to update this file. This project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.6](https://github.com/sgerrand/quart-assets/compare/v0.1.5...v0.1.6) (2026-06-14)
+
+
+### Bug Fixes
+
+* **deps:** Bump uv from 0.11.6 to 0.11.15 ([#124](https://github.com/sgerrand/quart-assets/issues/124)) ([f91624a](https://github.com/sgerrand/quart-assets/commit/f91624a5ef9b0a0ce8b072eb17088975e7a57b67))
+
 ## [0.1.5](https://github.com/sgerrand/quart-assets/compare/v0.1.4...v0.1.5) (2026-05-21)
 
 
