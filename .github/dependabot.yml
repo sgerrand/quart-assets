@@ -21,11 +21,18 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    allow:
+      - dependency-type: direct
     commit-message:
       prefix: fix
       prefix-development: chore
       include: scope
     groups:
+      python-development:
+        dependency-type: development
+        patterns:
+          - "*"
       python:
+        dependency-type: production
         patterns:
           - "*"
