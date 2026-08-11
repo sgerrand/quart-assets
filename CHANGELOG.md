@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. See [Keep a
 CHANGELOG](http://keepachangelog.com/) for how to update this file. This project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.7](https://github.com/sgerrand/quart-assets/compare/v0.1.6...v0.1.7) (2026-08-11)
+
+
+### Bug Fixes
+
+* **deps:** Bump h2 from 4.3.0 to 4.4.1 ([#144](https://github.com/sgerrand/quart-assets/issues/144)) ([bbbf152](https://github.com/sgerrand/quart-assets/commit/bbbf152e4d80174678ac036f7ca06399d8d54ba9))
+* **deps:** Bump pymdown-extensions from 10.21.3 to 11.0 ([#139](https://github.com/sgerrand/quart-assets/issues/139)) ([a1f9556](https://github.com/sgerrand/quart-assets/commit/a1f955613f30c13ba1fdbfcdb383ca7fb9f9ca24))
+* **deps:** Bump pymdown-extensions from 11.0 to 11.0.1 ([#145](https://github.com/sgerrand/quart-assets/issues/145)) ([dcb02c1](https://github.com/sgerrand/quart-assets/commit/dcb02c120b0eabbd360ff2a0351c46e84067f0f5))
+
 ## [0.1.6](https://github.com/sgerrand/quart-assets/compare/v0.1.5...v0.1.6) (2026-06-14)
 
 
