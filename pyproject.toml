@@ -18,6 +18,12 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
@@ -101,7 +107,7 @@ addopts = "--showlocals --strict-markers"
 testpaths = ["tests"]
 
 [tool.tox]
-env_list = ["lint", "py3{10,11,12,13}", "types", "package", "report"]
+env_list = ["lint", "py3{10,11,12,13,14}", "types", "package", "report"]
 skip_missing_interpreters = true
 runner = "uv-venv-lock-runner"
 
@@ -111,6 +117,7 @@ python = """
     3.11: py311
     3.12: py312
     3.13: py313
+    3.14: py314
     """
 
 [tool.tox.env_run_base]
@@ -118,7 +125,7 @@ dependency_groups = ["test"]
 commands = [["pytest", "--cov", "--cov-append", "{posargs}"]]
 
 [tool.tox.env.lint]
-base_python = "python3.13"
+base_python = "python3.14"
 deps = ["ruff"]
 skip_install = true
 commands = [
@@ -127,7 +134,7 @@ commands = [
 ]
 
 [tool.tox.env.report]
-base_python = "python3.13"
+base_python = "python3.14"
 deps = ["coverage"]
 skip_install = true
 commands = [
@@ -136,12 +143,12 @@ commands = [
 ]
 
 [tool.tox.env.types]
-base_python = "python3.13"
+base_python = "python3.14"
 deps = ["ty", "pytest"]
 commands = [["ty", "check"]]
 
 [tool.tox.env.package]
-base_python = "python3.13"
+base_python = "python3.14"
 allowlist_externals = ["uv"]
 deps = ["twine"]
 commands = [
