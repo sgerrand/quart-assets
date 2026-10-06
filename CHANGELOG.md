@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. See [Keep a
 CHANGELOG](http://keepachangelog.com/) for how to update this file. This project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.8](https://github.com/sgerrand/quart-assets/compare/v0.1.7...v0.1.8) (2026-10-06)
+
+
+### Bug Fixes
+
+* **deps:** Bump urllib3 from 2.7.0 to 2.8.0 ([#153](https://github.com/sgerrand/quart-assets/issues/153)) ([8387c92](https://github.com/sgerrand/quart-assets/commit/8387c9261cefcda0d5bfa1a6d269a70745820d9d))
+* **deps:** Bump virtualenv from 21.2.1 to 21.7.13 ([#156](https://github.com/sgerrand/quart-assets/issues/156)) ([b7c19d6](https://github.com/sgerrand/quart-assets/commit/b7c19d68f2497caae2a2eada6a41a456a7313dbf))
+* **deps:** Bump werkzeug from 3.1.8 to 3.1.9 ([#155](https://github.com/sgerrand/quart-assets/issues/155)) ([c9a6833](https://github.com/sgerrand/quart-assets/commit/c9a683336a584ff586bae0e06b056eabe08a603f))
+
 ## [0.1.7](https://github.com/sgerrand/quart-assets/compare/v0.1.6...v0.1.7) (2026-08-11)
 
 
