@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. See [Keep a
 CHANGELOG](http://keepachangelog.com/) for how to update this file. This project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.10](https://github.com/sgerrand/quart-assets/compare/v0.1.9...v0.1.10) (2026-10-28)
+
+
+### Bug Fixes
+
+* **deps:** Bump certifi from 2026.10.19 to 2026.10.23 ([#165](https://github.com/sgerrand/quart-assets/issues/165)) ([d6c080c](https://github.com/sgerrand/quart-assets/commit/d6c080cefedb60b41a78cb39d817bc1e26db8a60))
+* **deps:** Bump certifi from 2026.2.25 to 2026.10.19 ([#161](https://github.com/sgerrand/quart-assets/issues/161)) ([a82f7d5](https://github.com/sgerrand/quart-assets/commit/a82f7d57f948c9019e8a96bdc1ea2c0d452d4bde))
+* **deps:** Bump virtualenv from 21.7.13 to 21.14.13 ([#163](https://github.com/sgerrand/quart-assets/issues/163)) ([d412fc2](https://github.com/sgerrand/quart-assets/commit/d412fc2ef7422a5a1aeffbb95e074aa6073d419b))
+
 ## [0.1.9](https://github.com/sgerrand/quart-assets/compare/v0.1.8...v0.1.9) (2026-10-21)
 
 
