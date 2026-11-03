@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file. See [Keep a
 CHANGELOG](http://keepachangelog.com/) for how to update this file. This project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.0](https://github.com/sgerrand/quart-assets/compare/v0.1.10...v1.0.0) (2026-11-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* quart-assets now needs Python 3.11 or newer.
+
+### Build System
+
+* drop Python 3.10 support and fix filelock vulnerability ([#167](https://github.com/sgerrand/quart-assets/issues/167)) ([0ba321f](https://github.com/sgerrand/quart-assets/commit/0ba321f8e10657c67c5519c43855f81bce54e278))
+
 ## [0.1.10](https://github.com/sgerrand/quart-assets/compare/v0.1.9...v0.1.10) (2026-10-28)
 
 
