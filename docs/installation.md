@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.11+
 - Quart 0.20.0+
 - webassets 2.0+
 
