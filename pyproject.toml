@@ -11,7 +11,7 @@ authors = [
 ]
 license = {text = "BSD-2-Clause"}
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = ["quart", "webassets", "assets"]
 classifiers = [
     "Environment :: Web Environment",
@@ -19,7 +19,6 @@ classifiers = [
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -68,7 +67,7 @@ docs = [
 
 [tool.ruff]
 line-length = 100
-target-version = "py310"
+target-version = "py311"
 exclude = [
     ".git",
     ".tox",
@@ -107,13 +106,12 @@ addopts = "--showlocals --strict-markers"
 testpaths = ["tests"]
 
 [tool.tox]
-env_list = ["lint", "py3{10,11,12,13,14}", "types", "package", "report"]
+env_list = ["lint", "py3{11,12,13,14}", "types", "package", "report"]
 skip_missing_interpreters = true
 runner = "uv-venv-lock-runner"
 
 [tool.tox.gh-actions]
 python = """
-    3.10: py310
     3.11: py311
     3.12: py312
     3.13: py313
