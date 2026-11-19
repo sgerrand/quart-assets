@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file. See [Keep a
 CHANGELOG](http://keepachangelog.com/) for how to update this file. This project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0](https://github.com/sgerrand/quart-assets/compare/v1.0.0...v1.1.0) (2026-11-19)
+
+
+### Features
+
+* make Python 3.15 the default version ([#171](https://github.com/sgerrand/quart-assets/issues/171)) ([6fbe531](https://github.com/sgerrand/quart-assets/commit/6fbe5314aff5fe6de52af46ae7971afc72659237))
+
+
+### Bug Fixes
+
+* **deps:** Bump quart from 0.20.0 to 0.22.0 in the python group ([#170](https://github.com/sgerrand/quart-assets/issues/170)) ([e7b81dd](https://github.com/sgerrand/quart-assets/commit/e7b81dde2111f33ace0ddca5b0ffeb431330b07c))
+
 ## [1.0.0](https://github.com/sgerrand/quart-assets/compare/v0.1.10...v1.0.0) (2026-11-03)
 
 
