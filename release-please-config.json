@@ -4,7 +4,12 @@
   "packages": {
     ".": {
       "extra-files": [
-        "src/quart_assets/__init__.py"
+        "src/quart_assets/__init__.py",
+        {
+          "type": "toml",
+          "path": "uv.lock",
+          "jsonpath": "$.package[?(@.name.value=='quart-assets')].version"
+        }
       ]
     }
   }
