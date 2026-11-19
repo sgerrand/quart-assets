@@ -49,10 +49,17 @@ test = [
     "pytest-cov",
     "pyyaml",
 ]
+lint = [
+    "ruff",
+]
+package = [
+    "twine",
+]
 dev = [
     {include-group = "test"},
+    {include-group = "lint"},
+    {include-group = "package"},
     "pre-commit",
-    "ruff",
     "tox",
     "tox-uv",
     "ty",
