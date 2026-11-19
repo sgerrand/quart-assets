@@ -15,17 +15,24 @@ repos:
       - id: check-merge-conflict
       - id: debug-statements
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.13
-    hooks:
-      - id: ruff
-        args: [--fix]
-        files: ^(src/|tests/)
-      - id: ruff-format
-        files: ^(src/|tests/)
-
   - repo: local
     hooks:
+      - id: ruff
+        name: ruff check
+        entry: uv run --frozen --group dev ruff check --fix --force-exclude
+        language: system
+        types_or: [python, pyi]
+        files: ^(src/|tests/)
+        require_serial: true
+
+      - id: ruff-format
+        name: ruff format
+        entry: uv run --frozen --group dev ruff format --force-exclude
+        language: system
+        types_or: [python, pyi]
+        files: ^(src/|tests/)
+        require_serial: true
+
       - id: uv-lock-check
         name: uv lock --check
         entry: uv lock --check

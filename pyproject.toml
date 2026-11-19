@@ -49,10 +49,21 @@ test = [
     "pytest-cov",
     "pyyaml",
 ]
+lint = [
+    "ruff",
+]
+package = [
+    "twine",
+]
+report = [
+    "coverage",
+]
 dev = [
     {include-group = "test"},
+    {include-group = "lint"},
+    {include-group = "package"},
+    {include-group = "report"},
     "pre-commit",
-    "ruff",
     "tox",
     "tox-uv",
     "ty",
@@ -109,7 +120,6 @@ testpaths = ["tests"]
 [tool.tox]
 env_list = ["lint", "py3{11,12,13,14,15}", "types", "package", "report"]
 skip_missing_interpreters = true
-runner = "uv-venv-lock-runner"
 
 [tool.tox.gh-actions]
 python = """
@@ -121,12 +131,13 @@ python = """
     """
 
 [tool.tox.env_run_base]
+runner = "uv-venv-lock-runner"
 dependency_groups = ["test"]
 commands = [["pytest", "--cov", "--cov-append", "{posargs}"]]
 
 [tool.tox.env.lint]
 base_python = "python3.15"
-deps = ["ruff"]
+dependency_groups = ["lint"]
 skip_install = true
 commands = [
     ["ruff", "check", "src/quart_assets/", "tests/"],
@@ -135,7 +146,7 @@ commands = [
 
 [tool.tox.env.report]
 base_python = "python3.15"
-deps = ["coverage"]
+dependency_groups = ["report"]
 skip_install = true
 commands = [
     ["coverage", "report"],
@@ -144,13 +155,13 @@ commands = [
 
 [tool.tox.env.types]
 base_python = "python3.15"
-deps = ["ty", "pytest"]
+dependency_groups = ["dev"]
 commands = [["ty", "check"]]
 
 [tool.tox.env.package]
 base_python = "python3.15"
 allowlist_externals = ["uv"]
-deps = ["twine"]
+dependency_groups = ["package"]
 commands = [
     ["uv", "build"],
     ["twine", "check", "dist/*"],
