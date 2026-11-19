@@ -8,7 +8,7 @@ build:
   jobs:
     install:
       - pip install uv
-      - uv sync --group docs --no-default-groups
+      - uv sync --python 3.14 --group docs --no-default-groups
     build:
       html:
-        - uv run --group docs --module mkdocs build --clean --site-dir "$READTHEDOCS_OUTPUT/html" --config-file mkdocs.yml
+        - uv run --python 3.14 --group docs --module mkdocs build --clean --site-dir "$READTHEDOCS_OUTPUT/html" --config-file mkdocs.yml
