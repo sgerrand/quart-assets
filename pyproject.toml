@@ -55,10 +55,14 @@ lint = [
 package = [
     "twine",
 ]
+report = [
+    "coverage",
+]
 dev = [
     {include-group = "test"},
     {include-group = "lint"},
     {include-group = "package"},
+    {include-group = "report"},
     "pre-commit",
     "tox",
     "tox-uv",
