@@ -124,7 +124,7 @@ dependency_groups = ["test"]
 commands = [["pytest", "--cov", "--cov-append", "{posargs}"]]
 
 [tool.tox.env.lint]
-base_python = "python3.14"
+base_python = "python3.15"
 deps = ["ruff"]
 skip_install = true
 commands = [
@@ -133,7 +133,7 @@ commands = [
 ]
 
 [tool.tox.env.report]
-base_python = "python3.14"
+base_python = "python3.15"
 deps = ["coverage"]
 skip_install = true
 commands = [
@@ -142,12 +142,12 @@ commands = [
 ]
 
 [tool.tox.env.types]
-base_python = "python3.14"
+base_python = "python3.15"
 deps = ["ty", "pytest"]
 commands = [["ty", "check"]]
 
 [tool.tox.env.package]
-base_python = "python3.14"
+base_python = "python3.15"
 allowlist_externals = ["uv"]
 deps = ["twine"]
 commands = [
