@@ -86,7 +86,8 @@ quart assets watch
 - **Entry point**: `pyproject.toml` defines `quart.commands` entry point for CLI integration
 - **Version**: Managed via `__version__` string in `src/quart_assets/__init__.py`
 - **Dependencies**: Core deps are `quart>=0.20.0,<0.21.0` and `webassets>=2.0`
-- **Python support**: 3.11, 3.12, 3.13, 3.14 (defined in `pyproject.toml` under `[tool.tox]` and `[project]`)
+- **Python support**: 3.11, 3.12, 3.13, 3.14, 3.15 (defined in `pyproject.toml` under `[tool.tox]` and `[project]`)
+- **Default Python**: 3.15, set in `.python-version`. uv and the CI pre-commit and publish jobs read it. The tox tooling envs (`base_python`) and `.pre-commit-config.yaml` set their own version and must be updated by hand. Read the Docs stays on 3.14: `.readthedocs.yml` sets it in `tools.python` and in the `--python` flag of each uv command. Change all three together, or uv falls back to `.python-version`.
 
 ## Notable Implementation Details
 
