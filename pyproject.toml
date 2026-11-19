@@ -133,8 +133,7 @@ commands = [["pytest", "--cov", "--cov-append", "{posargs}"]]
 
 [tool.tox.env.lint]
 base_python = "python3.15"
-runner = "uv-venv-runner"
-deps = ["ruff"]
+dependency_groups = ["lint"]
 skip_install = true
 commands = [
     ["ruff", "check", "src/quart_assets/", "tests/"],
@@ -158,9 +157,8 @@ commands = [["ty", "check"]]
 
 [tool.tox.env.package]
 base_python = "python3.15"
-runner = "uv-venv-runner"
 allowlist_externals = ["uv"]
-deps = ["twine"]
+dependency_groups = ["package"]
 commands = [
     ["uv", "build"],
     ["twine", "check", "dist/*"],
