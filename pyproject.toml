@@ -27,7 +27,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "quart>=0.20.0,<0.21.0",
+    "quart>=0.20.0,<0.23.0",
     "pyscss",
     "pyyaml",
     "webassets>=2.0",
