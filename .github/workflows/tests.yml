@@ -23,7 +23,7 @@ jobs:
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
 
       - name: Install dev dependencies
-        run: uv sync --group dev
+        run: uv sync --locked --group dev
 
       - name: Run pre-commit (commit stage)
         run: uv run pre-commit run --all-files --show-diff-on-failure
