@@ -55,10 +55,14 @@ lint = [
 package = [
     "twine",
 ]
+report = [
+    "coverage",
+]
 dev = [
     {include-group = "test"},
     {include-group = "lint"},
     {include-group = "package"},
+    {include-group = "report"},
     "pre-commit",
     "tox",
     "tox-uv",
@@ -142,8 +146,7 @@ commands = [
 
 [tool.tox.env.report]
 base_python = "python3.15"
-runner = "uv-venv-runner"
-deps = ["coverage"]
+dependency_groups = ["report"]
 skip_install = true
 commands = [
     ["coverage", "report"],

@@ -1326,6 +1326,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "coverage" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -1350,6 +1351,9 @@ lint = [
 package = [
     { name = "twine" },
 ]
+report = [
+    { name = "coverage" },
+]
 test = [
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -1366,6 +1370,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "coverage" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -1386,6 +1391,7 @@ docs = [
 ]
 lint = [{ name = "ruff" }]
 package = [{ name = "twine" }]
+report = [{ name = "coverage" }]
 test = [
     { name = "pytest" },
     { name = "pytest-cov" },
