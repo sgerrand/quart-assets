@@ -118,7 +118,7 @@ addopts = "--showlocals --strict-markers"
 testpaths = ["tests"]
 
 [tool.tox]
-env_list = ["lint", "py3{11,12,13,14,15}", "types", "package", "report"]
+env_list = ["lint", "py311", "py312", "py313", "py314", "py315", "types", "package", "report"]
 skip_missing_interpreters = true
 
 [tool.tox.gh-actions]
